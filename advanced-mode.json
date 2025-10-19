@@ -1,0 +1,110 @@
+{
+  "SimplePresent": [
+    {"q":"I ____ to school every day.","type":"mcq","opts":["go","goes","going","went"],"ans":0},
+    {"q":"She ____ like vegetables.","type":"mcq","opts":["don't","doesn't","isn't","aren't"],"ans":1},
+    {"q":"____ you play football on Sundays?","type":"mcq","opts":["Do","Does","Are","Is"],"ans":0},
+    {"q":"They ____ TV in the evening.","type":"gap","ans":"watch"},
+    {"q":"He ____ like swimming.","type":"gap","ans":"doesn't"},
+    {"q":"I always ____ my teeth before bed.","type":"gap","ans":"brush"},
+    {"q":"We ____ go to the park on Saturdays.","type":"gap","ans":"usually"},
+    {"q":"She ____ read books every night.","type":"gap","ans":"reads"},
+    {"q":"____ your brother like ice cream?","type":"mcq","opts":["Do","Does","Is","Are"],"ans":1},
+    {"q":"I ____ my homework after school.","type":"gap","ans":"do"}
+  ],
+  "AdverbsFrequency": [
+    {"q":"I ____ eat breakfast in the morning.","type":"mcq","opts":["always","never","sometimes","often"],"ans":0},
+    {"q":"He ____ goes to the gym.","type":"mcq","opts":["always","never","sometimes","rarely"],"ans":2},
+    {"q":"They ____ watch movies on Fridays.","type":"gap","ans":"usually"},
+    {"q":"We ____ forget our books at school.","type":"gap","ans":"never"},
+    {"q":"She ____ plays tennis on weekends.","type":"gap","ans":"often"},
+    {"q":"I ____ visit my grandparents.","type":"gap","ans":"sometimes"},
+    {"q":"My brother ____ eats vegetables.","type":"gap","ans":"rarely"},
+    {"q":"Do you ____ read before sleeping?","type":"mcq","opts":["always","never","sometimes","often"],"ans":2},
+    {"q":"He ____ listens to music in class.","type":"gap","ans":"never"},
+    {"q":"We ____ go swimming in summer.","type":"gap","ans":"usually"}
+  ],
+  "AdverbsManner": [
+    {"q":"He runs ____ fast.","type":"gap","ans":"very"},
+    {"q":"She sings ____ beautifully.","type":"gap","ans":"really"},
+    {"q":"The dog barked ____ loudly.","type":"gap","ans":"so"},
+    {"q":"I write ____ neatly.","type":"gap","ans":"quite"},
+    {"q":"They speak English ____ well.","type":"gap","ans":"very"},
+    {"q":"He drives ____ carefully.","type":"gap","ans":"carefully"},
+    {"q":"She danced ____ gracefully.","type":"gap","ans":"gracefully"},
+    {"q":"I draw ____ slowly.","type":"gap","ans":"slowly"},
+    {"q":"The cat moves ____ quietly.","type":"gap","ans":"very"},
+    {"q":"We solve problems ____ easily.","type":"gap","ans":"easily"}
+  ],
+  "HabitualActions": [
+    {"q":"Every morning, I ____ up at 7 a.m.","type":"gap","ans":"get"},
+    {"q":"She ____ coffee after breakfast.","type":"gap","ans":"drinks"},
+    {"q":"We ____ our homework every day.","type":"gap","ans":"do"},
+    {"q":"He ____ to school by bus.","type":"gap","ans":"goes"},
+    {"q":"They ____ football every weekend.","type":"gap","ans":"play"},
+    {"q":"I ____ my room every Saturday.","type":"gap","ans":"clean"},
+    {"q":"She ____ a shower in the morning.","type":"gap","ans":"takes"},
+    {"q":"We ____ lunch at 1 p.m.","type":"gap","ans":"have"},
+    {"q":"He ____ TV after school.","type":"gap","ans":"watches"},
+    {"q":"They ____ books from the library.","type":"gap","ans":"borrow"}
+  ],
+  "NegativeSentences": [
+    {"q":"I ____ like spinach.","type":"gap","ans":"don't"},
+    {"q":"She ____ play basketball.","type":"gap","ans":"doesn't"},
+    {"q":"We ____ watch horror movies.","type":"gap","ans":"don't"},
+    {"q":"He ____ eat meat.","type":"gap","ans":"doesn't"},
+    {"q":"They ____ go to school on Sunday.","type":"gap","ans":"don't"},
+    {"q":"I ____ drink coffee.","type":"gap","ans":"don't"},
+    {"q":"She ____ like swimming.","type":"gap","ans":"doesn't"},
+    {"q":"We ____ visit our cousins every week.","type":"gap","ans":"don't"},
+    {"q":"He ____ read magazines.","type":"gap","ans":"doesn't"},
+    {"q":"They ____ listen to rock music.","type":"gap","ans":"don't"}
+  ],
+  "InterrogativeSentences": [
+    {"q":"____ you like pizza?","type":"mcq","opts":["Do","Does","Is","Are"],"ans":0},
+    {"q":"____ she play the piano?","type":"mcq","opts":["Do","Does","Is","Are"],"ans":1},
+    {"q":"____ they go to school by bus?","type":"mcq","opts":["Do","Does","Are","Is"],"ans":0},
+    {"q":"____ he eat vegetables?","type":"mcq","opts":["Do","Does","Is","Are"],"ans":1},
+    {"q":"____ we have English today?","type":"mcq","opts":["Do","Does","Are","Is"],"ans":0},
+    {"q":"____ your brother like football?","type":"mcq","opts":["Do","Does","Is","Are"],"ans":1},
+    {"q":"____ you help me with homework?","type":"mcq","opts":["Do","Does","Is","Are"],"ans":0},
+    {"q":"____ she live in London?","type":"mcq","opts":["Do","Does","Is","Are"],"ans":1},
+    {"q":"____ they watch TV every day?","type":"mcq","opts":["Do","Does","Are","Is"],"ans":0},
+    {"q":"____ it rain in summer?","type":"mcq","opts":["Do","Does","Is","Are"],"ans":2}
+  ],
+  "PresentContinuousContrast": [
+    {"q":"I ____ (read) a book now.","type":"gap","ans":"am reading"},
+    {"q":"She ____ (play) tennis at the moment.","type":"gap","ans":"is playing"},
+    {"q":"They ____ (watch) TV right now.","type":"gap","ans":"are watching"},
+    {"q":"He ____ (eat) lunch currently.","type":"gap","ans":"is eating"},
+    {"q":"We ____ (study) English today.","type":"gap","ans":"are studying"},
+    {"q":"I usually walk to school, but now I ____ (go) by bus.","type":"gap","ans":"am going"},
+    {"q":"She normally sleeps early but tonight she ____ (stay) up.","type":"gap","ans":"is staying"},
+    {"q":"They usually play football, but today they ____ (play) basketball.","type":"gap","ans":"are playing"},
+    {"q":"He normally drinks tea but now he ____ (drink) coffee.","type":"gap","ans":"is drinking"},
+    {"q":"I normally brush teeth in the morning but now I ____ (brush) after lunch.","type":"gap","ans":"am brushing"}
+  ],
+  "CommonCollocations": [
+    {"q":"Make a ____","type":"mcq","opts":["decision","cake","bed","painting"],"ans":0},
+    {"q":"Do the ____","type":"mcq","opts":["homework","garden","painting","shopping"],"ans":0},
+    {"q":"Have a ____","type":"mcq","opts":["rest","sleep","run","drink"],"ans":0},
+    {"q":"Take a ____","type":"mcq","opts":["break","bath","walk","run"],"ans":0},
+    {"q":"Do the ____","type":"mcq","opts":["dishes","exercise","homework","run"],"ans":0},
+    {"q":"Make a ____","type":"mcq","opts":["mistake","run","sleep","drink"],"ans":0},
+    {"q":"Have a ____","type":"mcq","opts":["party","run","decision","painting"],"ans":0},
+    {"q":"Take a ____","type":"mcq","opts":["nap","walk","decision","rest"],"ans":0},
+    {"q":"Do the ____","type":"mcq","opts":["shopping","dishes","homework","exercise"],"ans":0},
+    {"q":"Make a ____","type":"mcq","opts":["plan","cake","rest","nap"],"ans":0}
+  ],
+  "UniversalTruths": [
+    {"q":"The sun ____ in the east.","type":"gap","ans":"rises"},
+    {"q":"Water ____ at 0°C.","type":"gap","ans":"freezes"},
+    {"q":"Humans ____ to breathe air.","type":"gap","ans":"need"},
+    {"q":"The earth ____ around the sun.","type":"gap","ans":"revolves"},
+    {"q":"Rain ____ from clouds.","type":"gap","ans":"falls"},
+    {"q":"Birds ____ in the sky.","type":"gap","ans":"fly"},
+    {"q":"Fish ____ in water.","type":"gap","ans":"swim"},
+    {"q":"Fire ____ heat.","type":"gap","ans":"produces"},
+    {"q":"Ice ____ at room temperature.","type":"gap","ans":"melts"},
+    {"q":"Plants ____ food through photosynthesis.","type":"gap","ans":"make"}
+  ]
+}
