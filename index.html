@@ -1,1 +1,106 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width,initial-scale=1" />
+<title>INTUITY — Naughts & Crosses B2/C1 Edition</title>
+<style>
+:root{
+  --bg:#060606; --muted:#dfeee0; --lime1:#9be56a; --lime2:#5dd26b; --orange1:#ff9f4c; --orange2:#ff7a1f; --glass:rgba(255,255,255,0.04);
+  --card-pad:18px; --accent-bezier:cubic-bezier(.4,0,.2,1);
+  font-family: -apple-system, 'SF Pro Text', 'Helvetica Neue', Arial, sans-serif;
+}
+*{box-sizing:border-box}
+html,body{height:100%;margin:0;background:linear-gradient(180deg,#050606 0%, #071113 100%);color:var(--muted);-webkit-font-smoothing:antialiased}
+.container{max-width:980px;margin:22px auto;padding:18px;display:flex;flex-direction:column;gap:18px}
+.header{display:flex;align-items:center;justify-content:space-between;gap:12px}
+.brand{display:flex;flex-direction:column}
+.brand h1{margin:0;font-size:20px;color:whitesmoke;font-weight:600;letter-spacing:1px}
+.brand .sub{font-size:12px;color:rgba(255,255,255,0.7)}
+.brand .author{font-size:12px;color:rgba(255,255,255,0.45)}
+.statusBar{display:flex;gap:12px;align-items:center}
+.player{display:flex;align-items:center;gap:8px;padding:8px 12px;border-radius:12px;background:linear-gradient(180deg,rgba(255,255,255,0.02),transparent);border:1px solid rgba(255,255,255,0.03)}
+.player .icon{font-size:18px}
+.player .meta{font-size:13px}
+.boardWrap{display:flex;flex-direction:column;align-items:center;gap:12px}
+.board{width:460px;max-width:94vw;padding:18px;border-radius:16px;background:linear-gradient(180deg,rgba(255,255,255,0.02),rgba(0,0,0,0.45));border:1px solid rgba(255,255,255,0.03);box-shadow:20px 30px 60px rgba(0,0,0,0.7);position:relative}
+.boardHeader{display:flex;justify-content:space-between;align-items:center;margin-bottom:10px}
+.small{font-size:13px;color:rgba(255,255,255,0.7)}
+.grid{display:grid;grid-template-columns:repeat(3,1fr);gap:12px}
+.cell{aspect-ratio:1/1;border-radius:12px;display:flex;align-items:center;justify-content:center;position:relative;cursor:pointer;background:linear-gradient(180deg,rgba(255,255,255,0.01),rgba(0,0,0,0.3));border:1px solid rgba(255,255,255,0.03);transition:transform .25s var(--accent-bezier),box-shadow .18s;overflow:hidden;font-weight:600;color:rgba(173,216,230,0.9);font-size:16px;text-align:center;}
+.cell:hover{transform:translateY(-8px) rotateX(2deg);box-shadow:0 14px 30px rgba(0,0,0,0.6)}
+.cell.claimed-X{background:linear-gradient(180deg,var(--orange1),var(--orange2));color:#04270b}
+.cell.claimed-O{background:linear-gradient(180deg,var(--lime1),var(--lime2));color:#04270b}
+.cell.perfect{box-shadow:0 10px 30px rgba(5,140,50,0.25), inset 0 2px 10px rgba(255,255,255,0.03);}
+.cell.activeEdge{box-shadow:0 0 24px rgba(155,229,106,0.12);border:1px solid rgba(155,229,106,0.18)}
+.modal{position:fixed;inset:0;display:none;align-items:center;justify-content:center;padding:20px;z-index:60}
+.modal.show{display:flex}
+.panel{width:720px;max-width:96vw;border-radius:14px;padding:18px;background:linear-gradient(180deg,rgba(255,255,255,0.02),rgba(0,0,0,0.5));border:1px solid rgba(255,255,255,0.04);box-shadow:0 30px 60px rgba(0,0,0,0.7);backdrop-filter:blur(6px);position:relative;overflow:hidden}
+.panelHeader{display:flex;justify-content:space-between;align-items:center;margin-bottom:12px}
+.panelBody{display:grid;grid-template-columns:1fr 1fr;gap:12px}
+.q{background:linear-gradient(180deg,rgba(255,255,255,0.01),rgba(0,0,0,0.25));padding:12px;border-radius:10px;border:1px solid rgba(255,255,255,0.03)}
+.q h4{margin:0 0 8px 0;font-size:14px}
+.choices{display:flex;flex-wrap:wrap;gap:8px}
+.choice{padding:8px 10px;border-radius:10px;border:1px solid rgba(255,255,255,0.06);cursor:pointer;background:transparent;color:rgba(220,220,220,0.95)}
+.choice.selected{outline:2px solid rgba(255,255,255,0.04)}
+.choice.correct{background:linear-gradient(180deg,var(--lime1),var(--lime2));color:#04270b}
+.choice.wrong{background:rgba(255,80,80,0.12);border-color:rgba(255,80,80,0.18)}
+input.choice.input{border:1px solid rgba(173,216,230,0.6);background:rgba(255,255,255,0.03);color:var(--muted);padding:6px 10px;border-radius:8px;width:100%}
+.panelFooter{display:flex;justify-content:space-between;align-items:center;margin-top:12px}
+.btn{padding:8px 12px;border-radius:10px;border:0;cursor:pointer}
+.btn.ghost{background:transparent;border:1px solid rgba(255,255,255,0.06);color:var(--muted)}
+.btn.primary{background:linear-gradient(180deg,var(--lime1),var(--lime2));color:#04270b}
+</style>
+</head>
+<body>
+<div class="container">
+  <div class="header">
+    <div class="brand">
+      <h1>INTUITY</h1>
+      <div class="sub">Intuitive & Immersive</div>
+      <div class="author">Majid Nashtai</div>
+    </div>
+    <div class="statusBar">
+      <div class="player" id="playerX"><div class="icon">❌</div><div class="meta">Player X — <strong id="scoreX">0</strong></div></div>
+      <div class="player" id="playerO"><div class="icon">⭕</div><div class="meta">Player O — <strong id="scoreO">0</strong></div></div>
+    </div>
+  </div>
+  <div class="boardWrap">
+    <div class="board" id="board">
+      <div class="boardHeader"><div class="small">B2/C1 Mode — Click a topic to start</div></div>
+      <div class="grid" id="grid"></div>
+    </div>
+  </div>
+</div>
+<div class="modal" id="modal"><div class="panel" role="dialog" aria-modal="true"><div class="panelHeader"><div class="small" id="modalTopic">Topic</div></div><div class="panelBody" id="panelBody"></div><div class="panelFooter"><button class="btn ghost" id="closeBtn">Close</button><button class="btn primary" id="submitBtn">Submit</button></div></div></div>
+<script>
+// --- populate grid ---
+const labels=[['Sports','English','Music'],['English','Famous People','English'],['Countries','English','Cities']];
+const grid=document.getElementById('grid');
+labels.flat().forEach((t,i)=>{
+  const c=document.createElement('div'); c.className='cell'; c.textContent=t; c.dataset.index=i; grid.appendChild(c);
+});
+const modal=document.getElementById('modal'); const panelBody=document.getElementById('panelBody'); let activeIndex=null;
+const POOL={
+'Sports':[{type:'mcq',q:'Wimbledon sport?',opts:['Football','Tennis','Cricket'],a:1},{type:'gap',q:'Score zero in tennis is ___',a:'Love'}],
+'Music':[{type:'mcq',q:'Which band is from Liverpool?',opts:['Oasis','The Beatles','Coldplay'],a:1},{type:'gap',q:'Composer of Fur Elise: ___',a:'Beethoven'}],
+'Cities':[{type:'mcq',q:'Capital of France?',opts:['Paris','Rome','Berlin'],a:0},{type:'gap',q:'Capital of Portugal is ___',a:'Lisbon'}],
+'Countries':[{type:'mcq',q:'Largest country?',opts:['Canada','Russia','USA'],a:1},{type:'gap',q:'Madeira belongs to ___',a:'Portugal'}],
+'Famous People':[{type:'mcq',q:'Author of Hamlet?',opts:['Shakespeare','Homer','Dante'],a:0},{type:'gap',q:'Scientist of relativity: ___ Einstein',a:'Albert'}],
+'English':[{type:'gap',q:'She ___ to school every day',a:'goes'},{type:'gap',q:'He ___ like pizza',a:'does not'},{type:'mcq',q:'I ___ every morning',opts:['run','ran','running'],a:0},{type:'gap',q:'We ___ not watch TV daily',a:'do'},{type:'mcq',q:'They ___ coffee',opts:['drink','drank','drinks'],a:0}]
+};
+document.querySelectorAll('.cell').forEach(c=>c.addEventListener('click',()=>{
+  activeIndex=+c.dataset.index; const topic=labels.flat()[activeIndex]; openModal(topic);
+}));
+function openModal(topic){modal.classList.add('show'); panelBody.innerHTML=''; POOL[topic].forEach((q,i)=>{
+  const d=document.createElement('div'); d.className='q'; const h=document.createElement('h4'); h.textContent=`Q${i+1}. ${q.q}`; d.appendChild(h);
+  if(q.type==='mcq'){ const ch=document.createElement('div'); ch.className='choices'; q.opts.forEach((o,oi)=>{ const b=document.createElement('button'); b.className='choice'; b.textContent=o; b.dataset.sel=oi; b.addEventListener('click',()=>b.classList.toggle('selected')); ch.appendChild(b); }); d.appendChild(ch);
+  } else if(q.type==='gap'){ const inp=document.createElement('input'); inp.className='choice input'; inp.placeholder='type answer'; d.appendChild(inp); }
+  panelBody.appendChild(d);
+});}
+document.getElementById('closeBtn').addEventListener('click',()=>{modal.classList.remove('show');});
+document.getElementById('submitBtn').addEventListener('click',()=>{alert('Submission demo'); modal.classList.remove('show');});
+</script>
+</body>
+</html>
 
