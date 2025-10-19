@@ -3,261 +3,240 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width,initial-scale=1">
-<title>INTUITY — Naughts & Crosses Dual Mode</title>
+<title>INTUITY — English Grammar Quiz</title>
 <style>
 :root{
-  --bg:#060606; --muted:#dfeee0; --lime:#9be56a; --orange:#ffa24b; --softblue:#5aa1f2;
-  --card-pad:16px; --accent-bezier:cubic-bezier(.4,0,.2,1);
-  font-family: -apple-system, 'SF Pro Text', 'Helvetica Neue', Arial, sans-serif;
+  --bg:#0a0a0a;
+  --surface:#1a1a1e;
+  --card:#2a2a2f;
+  --accent:#6366f1;
+  --text:#e5e5e7;
+  --muted:#8e8e93;
+  font-family: -apple-system, 'SF Pro Display', 'Helvetica Neue', Arial, sans-serif;
 }
 *{box-sizing:border-box;}
-body{margin:0;height:100%;background:linear-gradient(180deg,#050606,#071113);color:var(--muted);-webkit-font-smoothing:antialiased;}
-.container{max-width:900px;margin:20px auto;padding:16px;display:flex;flex-direction:column;gap:16px;}
-.header{text-align:center;margin-bottom:10px;}
-.header h1{margin:0;font-size:22px;color:whitesmoke;font-weight:600;}
-.header .sub{font-size:13px;color:rgba(255,255,255,0.7);}
-.header .author{font-size:12px;color:rgba(255,255,255,0.45);}
-.boardWrap{background:rgba(255,255,255,0.02);border-radius:16px;padding:16px;display:flex;flex-direction:column;gap:12px;position:relative;}
-.topBar{display:flex;justify-content:space-between;align-items:center;margin-bottom:12px;}
-.players{display:flex;gap:10px;}
-.player{padding:6px 10px;border-radius:12px;background:rgba(255,255,255,0.03);display:flex;align-items:center;gap:6px;font-size:14px;}
-.toggleWrap{display:flex;align-items:center;gap:6px;}
-.toggleLabel{font-size:12px;}
-.toggleSwitch{position:relative;display:inline-block;width:50px;height:24px;}
-.toggleSwitch input{opacity:0;width:0;height:0;}
-.slider{position:absolute;cursor:pointer;top:0;left:0;right:0;bottom:0;background:#333;border-radius:34px;transition:.4s;}
-.slider:before{position:absolute;content:"";height:18px;width:18px;left:3px;bottom:3px;background:white;border-radius:50%;transition:.4s;}
-input:checked + .slider{background:var(--softblue);}
-input:checked + .slider:before{transform:translateX(26px);}
-.grid{display:grid;grid-template-columns:repeat(3,1fr);gap:12px;}
-.cell{aspect-ratio:1/1;border-radius:14px;background:rgba(255,255,255,0.05);display:flex;align-items:center;justify-content:center;font-size:16px;color:var(--softblue);cursor:pointer;transition:transform .25s,box-shadow .18s;position:relative;}
-.cell:hover{transform:translateY(-4px);box-shadow:0 8px 16px rgba(0,0,0,0.6);}
-.cell.claimed-X{background:var(--orange);color:#000;}
-.cell.claimed-O{background:var(--lime);color:#000;}
-.cell.active{box-shadow:0 0 12px rgba(255,255,255,0.12);}
-.modal{position:fixed;inset:0;display:none;align-items:center;justify-content:center;background:rgba(0,0,0,0.6);z-index:50;}
+body{margin:0;background:linear-gradient(135deg,var(--bg),#0f0f15);color:var(--text);-webkit-font-smoothing:antialiased;}
+.container{max-width:1000px;margin:0 auto;padding:20px;}
+.header{text-align:center;margin-bottom:30px;}
+.header h1{margin:0;font-size:28px;color:var(--accent);font-weight:700;}
+.header p{margin:5px 0;font-size:13px;color:var(--muted);}
+.grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(160px,1fr));gap:16px;margin-bottom:30px;}
+.neumorphic-btn{
+  position:relative;
+  width:100%;
+  aspect-ratio:1;
+  border:none;
+  background:linear-gradient(145deg,#2d2d33,#1f1f25);
+  box-shadow:
+    -4px -4px 10px rgba(255,255,255,0.05),
+    4px 4px 10px rgba(0,0,0,0.5),
+    inset -2px -2px 5px rgba(255,255,255,0.03),
+    inset 2px 2px 5px rgba(0,0,0,0.3);
+  border-radius:18px;
+  cursor:pointer;
+  transition:all 0.3s cubic-bezier(0.4,0,0.2,1);
+  color:var(--text);
+  font-size:13px;
+  font-weight:600;
+  padding:12px;
+  display:flex;
+  flex-direction:column;
+  align-items:center;
+  justify-content:center;
+  text-align:center;
+  line-height:1.3;
+}
+.neumorphic-btn:hover{
+  transform:translateY(-2px);
+  box-shadow:
+    -6px -6px 14px rgba(255,255,255,0.08),
+    6px 6px 14px rgba(0,0,0,0.6),
+    inset -2px -2px 5px rgba(255,255,255,0.04),
+    inset 2px 2px 5px rgba(0,0,0,0.4);
+}
+.neumorphic-btn:active{
+  transform:translateY(1px);
+  box-shadow:
+    -2px -2px 6px rgba(255,255,255,0.03),
+    2px 2px 6px rgba(0,0,0,0.4),
+    inset -3px -3px 8px rgba(0,0,0,0.4),
+    inset 3px 3px 8px rgba(255,255,255,0.02);
+}
+.modal{position:fixed;inset:0;display:none;align-items:center;justify-content:center;background:rgba(0,0,0,0.7);z-index:50;padding:20px;}
 .modal.show{display:flex;}
-.panel{background:rgba(255,255,255,0.05);border-radius:14px;padding:16px;width:90%;max-width:600px;display:flex;flex-direction:column;gap:12px;}
-.q{background:rgba(255,255,255,0.02);padding:10px;border-radius:10px;border:1px solid rgba(255,255,255,0.04);}
-.q h4{margin:0 0 6px 0;font-size:14px;}
-.choices{display:flex;flex-wrap:wrap;gap:8px;}
-.choice{padding:6px 10px;border-radius:8px;border:1px solid rgba(255,255,255,0.06);cursor:pointer;background:transparent;}
-.choice.selected{outline:2px solid rgba(255,255,255,0.1);}
-.choice.correct{background:var(--lime);}
-.choice.wrong{background:var(--orange);}
-input.choice{padding:6px 10px;border-radius:8px;border:1px solid rgba(255,255,255,0.06);width:100%;background:#111;color:#fff;}
-input.choice:focus{outline:2px solid var(--softblue);}
-.panelFooter{display:flex;justify-content:space-between;align-items:center;}
-.btn{padding:6px 10px;border-radius:10px;border:none;cursor:pointer;}
-.btn.primary{background:var(--softblue);color:#000;}
-.btn.ghost{background:transparent;border:1px solid rgba(255,255,255,0.05);color:#fff;}
+.panel{background:var(--card);border-radius:20px;padding:24px;width:100%;max-width:500px;max-height:80vh;overflow-y:auto;box-shadow:0 20px 60px rgba(0,0,0,0.6);}
+.panel-header{margin-bottom:20px;text-align:center;border-bottom:1px solid rgba(255,255,255,0.1);padding-bottom:12px;}
+.panel-title{font-size:18px;font-weight:700;color:var(--accent);margin:0;}
+.question{background:rgba(255,255,255,0.02);padding:14px;border-radius:12px;margin-bottom:14px;border:1px solid rgba(255,255,255,0.05);}
+.q-text{font-size:13px;margin:0 0 10px 0;font-weight:600;color:var(--text);}
+.choices{display:flex;flex-direction:column;gap:8px;}
+.choice-btn{
+  background:rgba(99,102,241,0.1);
+  border:1.5px solid rgba(99,102,241,0.2);
+  border-radius:10px;
+  padding:8px 12px;
+  color:var(--text);
+  font-size:12px;
+  cursor:pointer;
+  transition:all 0.2s;
+  text-align:left;
+  font-family:inherit;
+}
+.choice-btn:hover{background:rgba(99,102,241,0.2);border-color:rgba(99,102,241,0.4);}
+.choice-btn.selected{background:rgba(99,102,241,0.3);border-color:var(--accent);}
+.gap-input{
+  width:100%;
+  background:rgba(99,102,241,0.05);
+  border:1.5px solid rgba(99,102,241,0.2);
+  border-radius:10px;
+  padding:8px 12px;
+  color:var(--text);
+  font-size:12px;
+  font-family:inherit;
+}
+.gap-input:focus{outline:none;border-color:var(--accent);background:rgba(99,102,241,0.1);}
+.panel-footer{display:flex;gap:10px;margin-top:20px;justify-content:space-between;}
+.btn{padding:10px 16px;border-radius:10px;border:none;cursor:pointer;font-size:12px;font-weight:600;transition:all 0.2s;}
+.btn-close{background:rgba(255,255,255,0.05);color:var(--text);border:1px solid rgba(255,255,255,0.1);}
+.btn-close:hover{background:rgba(255,255,255,0.1);}
+.btn-submit{background:var(--accent);color:white;}
+.btn-submit:hover{background:#5558e3;transform:translateY(-1px);}
+.feedback{margin-top:10px;padding:10px;border-radius:10px;font-size:12px;text-align:center;}
+.feedback.correct{background:rgba(34,197,94,0.15);color:#22c55e;}
+.feedback.incorrect{background:rgba(239,68,68,0.15);color:#ef4444;}
 </style>
 </head>
 <body>
 <div class="container">
   <div class="header">
     <h1>INTUITY</h1>
-    <div class="sub">Intuitive & Immersive</div>
-    <div class="author">Majid Nashtai</div>
+    <p>English Grammar Quiz</p>
+    <p style="color:var(--accent);font-weight:600;">Cambridge B2 Level</p>
   </div>
 
-  <div class="boardWrap">
-    <div class="topBar">
-      <div class="players">
-        <div class="player" id="playerX">❌ <span id="scoreX">0</span></div>
-        <div class="player" id="playerO">⭕ <span id="scoreO">0</span></div>
-      </div>
-      <div class="toggleWrap">
-        <span class="toggleLabel">A2</span>
-        <label class="toggleSwitch">
-          <input type="checkbox" id="modeToggle">
-          <span class="slider"></span>
-        </label>
-        <span class="toggleLabel">B2/C1</span>
-      </div>
-    </div>
-
-    <div class="grid" id="grid"></div>
-  </div>
+  <div class="grid" id="grid"></div>
 </div>
 
 <div class="modal" id="modal">
   <div class="panel">
-    <div id="panelBody"></div>
-    <div class="panelFooter">
-      <button class="btn ghost" id="closeBtn">Close</button>
-      <button class="btn primary" id="submitBtn">Submit</button>
+    <div class="panel-header">
+      <h2 class="panel-title" id="categoryTitle">Grammar Rules</h2>
     </div>
+    <div id="questionsContainer"></div>
+    <div class="panel-footer">
+      <button class="btn btn-close" onclick="closeModal()">Close</button>
+      <button class="btn btn-submit" onclick="submitAnswers()">Submit</button>
+    </div>
+    <div id="feedback"></div>
   </div>
 </div>
 
 <script>
-// ---------------------
-// Sample Data
-// ---------------------
-const A2_DATA = {
-  "English": [
-    {type:'gap',q:'I ___ to school every day.',a:'go'},
-    {type:'mcq',q:'He ___ breakfast in the morning.',opts:['eat','eats','eating'],a:1}
-  ],
-  "Music": [
-    {type:'mcq',q:'Which instrument has strings?',opts:['Flute','Violin','Drum'],a:1}
-  ]
-};
+// Load JSON data
+let quizData = {};
+let currentCategory = '';
+let currentAnswers = {};
 
-const B2C1_DATA = {
-  "English": [
-    {type:'mcq',q:'Which is correct? "He ___ gone."',opts:['have','has','had'],a:1},
-    {type:'gap',q:'She ___ finished her homework.',a:'has'}
-  ],
-  "Music": [
-    {type:'mcq',q:'Who composed Fur Elise?',opts:['Mozart','Beethoven','Bach'],a:1}
-  ]
-};
+async function loadData() {
+  try {
+    const advancedRes = await fetch('advanced-mode.json');
+    quizData = await advancedRes.json();
+    buildGrid();
+  } catch (error) {
+    console.error('Error loading quiz data:', error);
+  }
+}
 
-// ---------------------
-// State
-// ---------------------
-let currentMode = 'A2'; // default
-let currentData = A2_DATA;
-let boardState = Array(9).fill(null);
-let currentTurn = 'X';
-let activeIndex = null;
-
-// Topics
-const TOPICS = [
-  ['Music','English','Cities'],
-  ['English','Countries','English'],
-  ['Sport','English','Famous People']
-];
-
-// ---------------------
-// DOM Build Grid
-// ---------------------
-const grid = document.getElementById('grid');
-function buildGrid(){
+function buildGrid() {
+  const grid = document.getElementById('grid');
   grid.innerHTML = '';
-  for(let r=0;r<3;r++){
-    for(let c=0;c<3;c++){
-      const idx = r*3+c;
-      const cell = document.createElement('div');
-      cell.className = 'cell';
-      cell.dataset.index = idx;
-      cell.textContent = TOPICS[r][c];
-      cell.addEventListener('click',()=>openModal(idx));
-      grid.appendChild(cell);
-    }
-  }
-}
-buildGrid();
-
-// ---------------------
-// Toggle Mode
-// ---------------------
-document.getElementById('modeToggle').addEventListener('change',(e)=>{
-  currentMode = e.target.checked ? 'B2C1' : 'A2';
-  currentData = currentMode==='B2C1'? B2C1_DATA : A2_DATA;
-  resetBoard();
-});
-
-// ---------------------
-// Modal Logic
-// ---------------------
-const modal = document.getElementById('modal');
-const panelBody = document.getElementById('panelBody');
-const closeBtn = document.getElementById('closeBtn');
-const submitBtn = document.getElementById('submitBtn');
-
-function openModal(idx){
-  if(boardState[idx]) return; // already claimed
-  activeIndex = idx;
-  modal.classList.add('show');
-  renderQuestions(TOPICS[Math.floor(idx/3)][idx%3]);
-  document.querySelector(`.cell[data-index='${idx}']`).classList.add('active');
+  
+  const categories = Object.keys(quizData);
+  categories.forEach(category => {
+    const btn = document.createElement('button');
+    btn.className = 'neumorphic-btn';
+    btn.textContent = category;
+    btn.onclick = () => openModal(category);
+    grid.appendChild(btn);
+  });
 }
 
-function closeModal(){
-  modal.classList.remove('show');
-  if(activeIndex!==null){
-    document.querySelector(`.cell[data-index='${activeIndex}']`).classList.remove('active');
-    activeIndex = null;
-  }
-}
-
-closeBtn.addEventListener('click',closeModal);
-
-// ---------------------
-// Render Questions
-// ---------------------
-function renderQuestions(topic){
-  panelBody.innerHTML='';
-  const questions = currentData[topic] || [];
-  questions.forEach((q,i)=>{
-    const qdiv = document.createElement('div'); qdiv.className='q';
-    const h = document.createElement('h4'); h.textContent = `Q${i+1}. ${q.q}`; qdiv.appendChild(h);
-
-    if(q.type==='mcq'){
-      const ch = document.createElement('div'); ch.className='choices';
-      q.opts.forEach((opt,oi)=>{
-        const btn = document.createElement('button'); btn.className='choice'; btn.textContent=opt;
-        btn.addEventListener('click',()=>btn.classList.toggle('selected'));
-        ch.appendChild(btn);
+function openModal(category) {
+  currentCategory = category;
+  currentAnswers = {};
+  
+  document.getElementById('categoryTitle').textContent = category;
+  
+  const questions = quizData[category].slice(0, 5); // Only show 5 questions
+  const container = document.getElementById('questionsContainer');
+  container.innerHTML = '';
+  
+  questions.forEach((q, idx) => {
+    const qDiv = document.createElement('div');
+    qDiv.className = 'question';
+    
+    let html = `<div class="q-text">Q${idx + 1}. ${q.q}</div>`;
+    
+    if (q.type === 'mcq') {
+      html += '<div class="choices">';
+      q.opts.forEach((opt, oi) => {
+        html += `<button class="choice-btn" onclick="selectChoice('q${idx}', ${oi}, this)">${opt}</button>`;
       });
-      qdiv.appendChild(ch);
-    } else if(q.type==='gap'){
-      const inp = document.createElement('input'); inp.className='choice'; inp.placeholder='type answer';
-      qdiv.appendChild(inp);
+      html += '</div>';
+    } else if (q.type === 'gap') {
+      html += `<input type="text" class="gap-input" placeholder="Your answer" data-index="${idx}">`;
     }
-    panelBody.appendChild(qdiv);
+    
+    qDiv.innerHTML = html;
+    container.appendChild(qDiv);
   });
+  
+  document.getElementById('modal').classList.add('show');
 }
 
-// ---------------------
-// Submit Answers
-// ---------------------
-submitBtn.addEventListener('click',()=>{
-  if(activeIndex===null) return;
-  const cell = document.querySelector(`.cell[data-index='${activeIndex}']`);
-  const topic = TOPICS[Math.floor(activeIndex/3)][activeIndex%3];
-  const questions = currentData[topic] || [];
-  let correct = true;
-  const qDivs = Array.from(panelBody.querySelectorAll('.q'));
+function selectChoice(qId, optIndex, element) {
+  const btns = element.parentElement.querySelectorAll('.choice-btn');
+  btns.forEach(b => b.classList.remove('selected'));
+  element.classList.add('selected');
+  currentAnswers[qId] = optIndex;
+}
 
-  questions.forEach((q,i)=>{
-    const qdiv = qDivs[i];
-    if(q.type==='mcq'){
-      const selected = Array.from(qdiv.querySelectorAll('.choice.selected'));
-      const correctIndex = q.a;
-      if(selected.length===1 && selected[0].textContent===q.opts[correctIndex]){
-        selected[0].classList.add('correct');
-      } else { correct=false; selected.forEach(s=>s.classList.add('wrong'));}
-    } else if(q.type==='gap'){
-      const val = qdiv.querySelector('input').value.trim().toLowerCase();
-      if(val===q.a.toLowerCase()){ qdiv.querySelector('input').classList.add('correct'); } else { correct=false; qdiv.querySelector('input').classList.add('wrong'); }
+function submitAnswers() {
+  const questions = quizData[currentCategory].slice(0, 5);
+  let correct = 0;
+  let feedback = '';
+  
+  questions.forEach((q, idx) => {
+    if (q.type === 'mcq') {
+      const selected = currentAnswers[`q${idx}`];
+      if (selected === q.ans) {
+        correct++;
+        feedback += `✓ Q${idx + 1} Correct\n`;
+      } else {
+        feedback += `✗ Q${idx + 1} Wrong (Answer: ${q.opts[q.ans]})\n`;
+      }
+    } else if (q.type === 'gap') {
+      const input = document.querySelector(`input[data-index="${idx}"]`);
+      const userAns = input.value.trim().toLowerCase();
+      if (userAns === q.ans.toLowerCase()) {
+        correct++;
+        feedback += `✓ Q${idx + 1} Correct\n`;
+      } else {
+        feedback += `✗ Q${idx + 1} Wrong (Answer: ${q.ans})\n`;
+      }
     }
   });
-
-  // Assign tile
-  if(correct){ 
-    boardState[activeIndex]=currentTurn;
-    cell.classList.add(currentTurn==='X'?'claimed-X':'claimed-O');
-    document.getElementById(currentTurn==='X'?'scoreX':'scoreO').textContent = parseInt(document.getElementById(currentTurn==='X'?'scoreX':'scoreO').textContent)+1;
-    currentTurn = currentTurn==='X'?'O':'X';
-  }
-
-  closeModal();
-});
-
-// ---------------------
-// Reset Board
-// ---------------------
-function resetBoard(){
-  boardState.fill(null);
-  currentTurn='X';
-  document.getElementById('scoreX').textContent=0;
-  document.getElementById('scoreO').textContent=0;
-  buildGrid();
+  
+  const feedbackEl = document.getElementById('feedback');
+  feedbackEl.className = correct === questions.length ? 'feedback correct' : 'feedback incorrect';
+  feedbackEl.textContent = `${correct}/${questions.length} Correct\n${feedback}`;
 }
+
+function closeModal() {
+  document.getElementById('modal').classList.remove('show');
+}
+
+loadData();
 </script>
 </body>
 </html>
