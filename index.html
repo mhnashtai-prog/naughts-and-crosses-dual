@@ -109,9 +109,9 @@ let currentQuestions = [];
 let selectedAnswers = {};
 
 const TOPICS_A2 = [
-  ['Cities','Countries','Sports'],
-  ['Music','English','FamousPeople'],
-  ['Cities','Countries','Sports']
+  ['English','Music','English'],
+  ['Cities','English','Countries'],
+  ['English','FamousPeople','English']
 ];
 
 const TOPICS_B2C1 = [
@@ -133,13 +133,18 @@ async function loadMode(mode) {
     allTopicData = {};
     if(mode === 'A2') {
       // Load A2 files
-      const fileNames = ['a2-cities.json', 'a2-countries.json', 'a2-sports.json', 'a2-music.json', 'a2-famous-people.json', 'elementary-mode.json'];
-      const topicNames = ['Cities', 'Countries', 'Sports', 'Music', 'FamousPeople', 'English'];
+      const fileNames = ['a2-cities.json', 'a2-countries.json', 'a2-music.json', 'a2-famous-people.json', 'a2-english.json'];
+      const topicNames = ['Cities', 'Countries', 'Music', 'FamousPeople', 'English'];
       
       for(let i = 0; i < fileNames.length; i++) {
-        const res = await fetch(fileNames[i]);
-        const data = await res.json();
-        allTopicData[topicNames[i]] = data;
+        try {
+          const res = await fetch(fileNames[i]);
+          const data = await res.json();
+          allTopicData[topicNames[i]] = data;
+          console.log(`Loaded ${topicNames[i]}:`, data);
+        } catch(err) {
+          console.error(`Failed to load ${fileNames[i]}:`, err);
+        }
       }
     } else {
       // Load B2/C1 files
@@ -147,9 +152,14 @@ async function loadMode(mode) {
       const topicNames = ['Cities', 'Countries', 'Sports', 'Music', 'FamousPeople', 'English'];
       
       for(let i = 0; i < fileNames.length; i++) {
-        const res = await fetch(fileNames[i]);
-        const data = await res.json();
-        allTopicData[topicNames[i]] = data;
+        try {
+          const res = await fetch(fileNames[i]);
+          const data = await res.json();
+          allTopicData[topicNames[i]] = data;
+          console.log(`Loaded ${topicNames[i]}:`, data);
+        } catch(err) {
+          console.error(`Failed to load ${fileNames[i]}:`, err);
+        }
       }
     }
     buildGrid();
@@ -222,30 +232,37 @@ function renderQuestions(topic){
   let questions = [];
   const topicData = allTopicData[topic];
   
-  if(currentMode === 'A2') {
-    // For A2 English (from elementary-mode.json)
-    if(topic === 'English' && Array.isArray(topicData)) {
-      questions = topicData.filter(q => q.type === 'mcq').slice(0, 5);
-    } 
-    // For A2 cultural topics (from a2-*.json files)
-    else if(topicData && topicData.questions) {
-      questions = topicData.questions.filter(q => q.type === 'mcq');
-      questions = shuffleArray([...questions]).slice(0, 5);
-    }
-  } else {
-    // For B2/C1 all topics
-    if(topic === 'English') {
-      // Advanced English topics - need to handle differently
-      const allEnglishQuestions = [];
-      for(let category in topicData) {
+  console.log(`Rendering topic: ${topic}`, topicData);
+  
+  if(!topicData) {
+    panelBody.innerHTML = '<p style="color:var(--orange);">Error: No data found for this topic</p>';
+    return;
+  }
+  
+  // Handle both structures: {questions: [...]} and direct array or nested object
+  if(topicData.questions && Array.isArray(topicData.questions)) {
+    // Structure: {questions: [...]} (for cultural topics)
+    questions = topicData.questions.filter(q => q.type === 'mcq');
+    questions = shuffleArray([...questions]).slice(0, 5);
+  } else if(Array.isArray(topicData)) {
+    // Structure: direct array (for a2-english.json)
+    questions = topicData.filter(q => q.type === 'mcq');
+    questions = shuffleArray([...questions]).slice(0, 5);
+  } else if(typeof topicData === 'object') {
+    // Structure: nested object with categories (for advanced-mode.json)
+    const allQuestions = [];
+    for(let category in topicData) {
+      if(Array.isArray(topicData[category])) {
         const catQuestions = topicData[category].filter(q => q.type === 'mcq');
-        allEnglishQuestions.push(...catQuestions);
+        allQuestions.push(...catQuestions);
       }
-      questions = shuffleArray([...allEnglishQuestions]).slice(0, 5);
-    } else if(topicData && topicData.questions) {
-      questions = topicData.questions.filter(q => q.type === 'mcq');
-      questions = shuffleArray([...questions]).slice(0, 5);
     }
+    questions = shuffleArray([...allQuestions]).slice(0, 5);
+  }
+  
+  if(questions.length === 0) {
+    panelBody.innerHTML = '<p style="color:var(--orange);">No MCQ questions available for this topic</p>';
+    return;
   }
   
   currentQuestions = questions;
