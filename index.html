@@ -132,23 +132,29 @@ async function loadMode(mode) {
   try {
     allTopicData = {};
     if(mode === 'A2') {
+      // Try both .json and .josn for a2-english
       const configs = [
         {file: 'a2-cities.json', topic: 'Cities'},
         {file: 'a2-countries.json', topic: 'Countries'},
         {file: 'a2-music.json', topic: 'Music'},
         {file: 'a2-famous-people.json', topic: 'FamousPeople'},
-        {file: 'a2-english.josn', topic: 'English'}
+        {file: 'a2-english.json', topic: 'English', fallback: 'a2-english.josn'}
       ];
       
       for(let config of configs) {
         try {
-          const res = await fetch(config.file);
+          let res = await fetch(config.file);
+          if(!res.ok && config.fallback) {
+            console.log(`Trying fallback: ${config.fallback}`);
+            res = await fetch(config.fallback);
+          }
           if(!res.ok) throw new Error(`HTTP ${res.status}`);
-          const data = await res.json();
+          const text = await res.text();
+          const data = JSON.parse(text);
           allTopicData[config.topic] = data;
-          console.log(`✓ Loaded ${config.topic}:`, data);
+          console.log(`✓ Loaded ${config.topic} (${config.file}):`, data);
         } catch(err) {
-          console.error(`✗ Failed to load ${config.file}:`, err);
+          console.error(`✗ Failed to load ${config.file}:`, err.message);
         }
       }
     } else {
@@ -165,14 +171,16 @@ async function loadMode(mode) {
         try {
           const res = await fetch(config.file);
           if(!res.ok) throw new Error(`HTTP ${res.status}`);
-          const data = await res.json();
+          const text = await res.text();
+          const data = JSON.parse(text);
           allTopicData[config.topic] = data;
-          console.log(`✓ Loaded ${config.topic}:`, data);
+          console.log(`✓ Loaded ${config.topic} (${config.file}):`, data);
         } catch(err) {
-          console.error(`✗ Failed to load ${config.file}:`, err);
+          console.error(`✗ Failed to load ${config.file}:`, err.message);
         }
       }
     }
+    console.log('All loaded topics:', Object.keys(allTopicData));
     buildGrid();
   } catch (error) {
     console.error('Error in loadMode:', error);
@@ -246,23 +254,29 @@ function extractMCQQuestions(topicData) {
     // Case 1: {questions: [...]}
     if(topicData && topicData.questions && Array.isArray(topicData.questions)) {
       allQuestions = topicData.questions;
+      console.log('  → Structure: {questions: [...]}');
     }
     // Case 2: Direct array
     else if(Array.isArray(topicData)) {
       allQuestions = topicData;
+      console.log('  → Structure: Direct array');
     }
-    // Case 3: Object with category keys (like advanced-mode.json or elementary-mode.json)
+    // Case 3: Object with category keys (like advanced-mode.json)
     else if(topicData && typeof topicData === 'object') {
+      console.log('  → Structure: Nested object with categories:', Object.keys(topicData));
       for(let key in topicData) {
         if(Array.isArray(topicData[key])) {
+          console.log(`    → Category "${key}": ${topicData[key].length} items`);
           allQuestions.push(...topicData[key]);
         }
       }
     }
     
+    console.log(`  → Total questions before filtering: ${allQuestions.length}`);
+    
     // Filter for MCQ questions with valid options
     const mcqQuestions = allQuestions.filter(q => {
-      return q && 
+      const isValid = q && 
              q.type === 'mcq' && 
              q.opts && 
              Array.isArray(q.opts) && 
@@ -270,11 +284,23 @@ function extractMCQQuestions(topicData) {
              typeof q.ans === 'number' &&
              q.ans >= 0 &&
              q.ans < q.opts.length;
+      
+      if(!isValid && q) {
+        console.log('    ✗ Invalid question:', {
+          hasType: !!q.type,
+          type: q.type,
+          hasOpts: !!q.opts,
+          optsLength: q.opts?.length,
+          hasValidAns: typeof q.ans === 'number' && q.ans >= 0 && q.ans < (q.opts?.length || 0)
+        });
+      }
+      return isValid;
     });
     
+    console.log(`  → Valid MCQ questions: ${mcqQuestions.length}`);
     return mcqQuestions;
   } catch(err) {
-    console.error('Error extracting questions:', err);
+    console.error('  ✗ Error extracting questions:', err);
     return [];
   }
 }
@@ -284,25 +310,25 @@ function renderQuestions(topic){
   
   const topicData = allTopicData[topic];
   
-  console.log(`=== Rendering topic: ${topic} ===`);
-  console.log('Raw data:', topicData);
+  console.log(`\n=== Rendering topic: ${topic} ===`);
   
   if(!topicData) {
-    panelBody.innerHTML = '<p style="color:var(--orange);">Error: Topic data not loaded. Check console for details.</p>';
+    console.error('✗ Topic data not found!');
+    panelBody.innerHTML = `<p style="color:var(--orange);">Error: "${topic}" data not loaded.<br><br>Available topics: ${Object.keys(allTopicData).join(', ')}<br><br>Check browser console for details.</p>`;
     return;
   }
   
   let questions = extractMCQQuestions(topicData);
-  console.log(`Found ${questions.length} valid MCQ questions`);
   
   if(questions.length === 0) {
-    panelBody.innerHTML = `<p style="color:var(--orange);">No valid MCQ questions found for ${topic}.<br>Data structure: ${Array.isArray(topicData) ? 'Array' : typeof topicData}</p>`;
+    panelBody.innerHTML = `<p style="color:var(--orange);">No valid MCQ questions found for "${topic}".<br><br>Check console for structure details.</p>`;
     return;
   }
   
   // Shuffle and take up to 5 questions
   questions = shuffleArray([...questions]).slice(0, 5);
   currentQuestions = questions;
+  console.log(`✓ Showing ${questions.length} questions`);
   
   questions.forEach((q,i)=>{
     const qdiv = document.createElement('div'); 
