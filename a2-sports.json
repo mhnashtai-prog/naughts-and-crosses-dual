@@ -1,1 +1,19 @@
-
+{
+  "questions": [
+    {"q":"How many players are on a football/soccer team?","type":"mcq","opts":["9","11","13","15"],"ans":1},
+    {"q":"What sport uses a racket and a small yellow ball?","type":"mcq","opts":["Basketball","Tennis","Badminton","Squash"],"ans":1},
+    {"q":"How many points is a basketball worth from far away?","type":"mcq","opts":["1 point","2 points","3 points","4 points"],"ans":2},
+    {"q":"What sport has a goalkeeper?","type":"mcq","opts":["Tennis","Football","Basketball","Volleyball"],"ans":1},
+    {"q":"Which sport uses a bat and stumps?","type":"mcq","opts":["Baseball","Cricket","Hockey","Golf"],"ans":1},
+    {"q":"How many players play on each side in tennis singles?","type":"mcq","opts":["1","2","3","4"],"ans":0},
+    {"q":"What do you call it when you score in football?","type":"mcq","opts":["Point","Run","Goal","Basket"],"ans":2},
+    {"q":"Which sport has a Super Bowl?","type":"mcq","opts":["Baseball","Basketball","American Football","Ice Hockey"],"ans":2},
+    {"q":"What sport is played on ice with a puck?","type":"mcq","opts":["Ice hockey","Figure skating","Curling","Speed skating"],"ans":0},
+    {"q":"How many rings are in the Olympic logo?","type":"mcq","opts":["3","4","5","6"],"ans":2},
+    {"q":"What sport has a serve and a net in the middle?","type":"mcq","opts":["Tennis","Basketball","Football","Rugby"],"ans":0},
+    {"q":"Which sport uses a shuttlecock?","type":"mcq","opts":["Tennis","Squash","Badminton","Table tennis"],"ans":2},
+    {"q":"What do swimmers race in?","type":"mcq","opts":["Ocean","River","Pool","Lake"],"ans":2},
+    {"q":"Which sport has a hole-in-one?","type":"mcq","opts":["Mini golf","Golf","Bowling","Archery"],"ans":1},
+    {"q":"What sport is Wimbledon famous for?","type":"mcq","opts":["Cricket","Football","Rugby","Tennis"],"ans":3}
+  ]
+}
