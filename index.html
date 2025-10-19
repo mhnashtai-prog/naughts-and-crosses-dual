@@ -109,9 +109,9 @@ let currentQuestions = [];
 let selectedAnswers = {};
 
 const TOPICS_A2 = [
-  ['SimplePresent','PresentContinuous','FrequencyAdverbs'],
-  ['BasicCollocations','PersonalRoutine','NegativeStatements'],
-  ['BasicQuestions','SimplePastRoutine','BasicAdverbsOfManner']
+  ['Cities','Countries','Sports'],
+  ['Music','English','FamousPeople'],
+  ['Cities','Countries','Sports']
 ];
 
 const TOPICS_B2C1 = [
@@ -130,10 +130,19 @@ function shuffleArray(arr) {
 
 async function loadMode(mode) {
   try {
+    allTopicData = {};
     if(mode === 'A2') {
-      const res = await fetch('elementary-mode.json');
-      allTopicData = await res.json();
+      // Load A2 files
+      const fileNames = ['a2-cities.json', 'a2-countries.json', 'a2-sports.json', 'a2-music.json', 'a2-famous-people.json', 'elementary-mode.json'];
+      const topicNames = ['Cities', 'Countries', 'Sports', 'Music', 'FamousPeople', 'English'];
+      
+      for(let i = 0; i < fileNames.length; i++) {
+        const res = await fetch(fileNames[i]);
+        const data = await res.json();
+        allTopicData[topicNames[i]] = data;
+      }
     } else {
+      // Load B2/C1 files
       const fileNames = ['cities.json', 'countries.json', 'sports.json', 'music.json', 'famous-people.json', 'advanced-mode.json'];
       const topicNames = ['Cities', 'Countries', 'Sports', 'Music', 'FamousPeople', 'English'];
       
@@ -159,6 +168,9 @@ function buildGrid(){
       const idx = r*3+c;
       const cell = document.createElement('div');
       cell.className = 'cell';
+      if(boardState[idx]) {
+        cell.classList.add(`claimed-${boardState[idx]}`);
+      }
       cell.dataset.index = idx;
       cell.textContent = topics[r][c];
       cell.addEventListener('click',()=>openModal(idx));
@@ -208,11 +220,29 @@ function renderQuestions(topic){
   panelBody.innerHTML='';
   
   let questions = [];
+  const topicData = allTopicData[topic];
+  
   if(currentMode === 'A2') {
-    questions = allTopicData[topic] ? allTopicData[topic].filter(q => q.type === 'mcq').slice(0, 5) : [];
+    // For A2 English (from elementary-mode.json)
+    if(topic === 'English' && Array.isArray(topicData)) {
+      questions = topicData.filter(q => q.type === 'mcq').slice(0, 5);
+    } 
+    // For A2 cultural topics (from a2-*.json files)
+    else if(topicData && topicData.questions) {
+      questions = topicData.questions.filter(q => q.type === 'mcq');
+      questions = shuffleArray([...questions]).slice(0, 5);
+    }
   } else {
-    const topicData = allTopicData[topic];
-    if(topicData && topicData.questions) {
+    // For B2/C1 all topics
+    if(topic === 'English') {
+      // Advanced English topics - need to handle differently
+      const allEnglishQuestions = [];
+      for(let category in topicData) {
+        const catQuestions = topicData[category].filter(q => q.type === 'mcq');
+        allEnglishQuestions.push(...catQuestions);
+      }
+      questions = shuffleArray([...allEnglishQuestions]).slice(0, 5);
+    } else if(topicData && topicData.questions) {
       questions = topicData.questions.filter(q => q.type === 'mcq');
       questions = shuffleArray([...questions]).slice(0, 5);
     }
