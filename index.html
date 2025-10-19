@@ -1,203 +1,167 @@
-<!doctype html>
+<!DOCTYPE html>
 <html lang="en">
 <head>
-<meta charset="utf-8">
-<meta name="viewport" content="width=device-width, initial-scale=1">
-<title>INTUITY — Naughts & Crosses Dual Mode</title>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>INTUITY — Naughts & Crosses</title>
 <style>
-:root {
-  --bg:#060606; --muted:#dfeee0; --lime:#9be56a; --orange:#f4a261;
-  --brick:#2c2c2c; --softblue:#6fb3f2; --glass:rgba(255,255,255,0.04);
-  --card-pad:16px; --accent-bezier:cubic-bezier(.4,0,.2,1);
-  font-family:-apple-system, 'SF Pro Text', 'Helvetica Neue', Arial, sans-serif;
+body {
+  margin:0; font-family: -apple-system, 'SF Pro Text', Helvetica, Arial, sans-serif; 
+  background: #060606; color: #dfeee0; display:flex; flex-direction:column; align-items:center; padding:20px;
 }
-*{box-sizing:border-box}
-body{margin:0;height:100%;background:linear-gradient(180deg,#050606,#071113);color:var(--muted);-webkit-font-smoothing:antialiased;}
-.header{display:flex;justify-content:center;align-items:center;flex-direction:column;padding:20px;text-align:center;}
-.header h1{margin:0;font-size:26px;color:white;}
-.header .sub{font-size:14px;color:rgba(255,255,255,0.7);}
-.header .author{font-size:12px;color:rgba(255,255,255,0.45);}
-
-.controls{display:flex;justify-content:space-between;align-items:center;width:90%;max-width:980px;margin:12px auto;gap:12px;}
-.toggle{display:flex;align-items:center;gap:6px;color:white;font-size:14px;}
-.toggle input{width:40px;height:20px;position:relative;-webkit-appearance:none;background:#333;border-radius:12px;outline:none;cursor:pointer;}
-.toggle input:checked{background:#0f9d58;}
-.toggle input::before{content:"";position:absolute;top:2px;left:2px;width:16px;height:16px;background:white;border-radius:50%;transition:0.3s;}
-.toggle input:checked::before{transform:translateX(20px);}
-.scores{display:flex;gap:12px;}
-.scores div{padding:6px 12px;border-radius:12px;background:linear-gradient(180deg,rgba(255,255,255,0.02),transparent);border:1px solid rgba(255,255,255,0.03);}
-
-.boardWrap{display:flex;justify-content:center;margin-top:20px;}
-.grid{display:grid;grid-template-columns:repeat(3,1fr);gap:12px;width:90%;max-width:600px;}
-.cell{aspect-ratio:1/1;border-radius:14px;background:#1a1a1a;color:var(--softblue);display:flex;justify-content:center;align-items:center;font-size:18px;font-weight:600;cursor:pointer;transition:all 0.25s var(--accent-bezier);border:2px solid transparent;position:relative;}
-.cell:hover{border-color:var(--lime);}
-.cell.claimed-X{background:var(--lime);color:#04270b;}
-.cell.claimed-O{background:var(--orange);color:#2c1c00;}
-.cell.active{box-shadow:0 0 16px rgba(155,229,106,0.3);}
-.modal{position:fixed;inset:0;display:none;align-items:center;justify-content:center;background:rgba(0,0,0,0.75);z-index:100;}
-.modal.show{display:flex;}
-.panel{background:#111;padding:20px;border-radius:12px;max-width:600px;width:90%;display:flex;flex-direction:column;gap:12px;}
-.panel h4{margin:0;font-size:14px;}
-.choices{display:flex;flex-wrap:wrap;gap:8px;}
-.choice{padding:6px 10px;border-radius:8px;border:1px solid rgba(255,255,255,0.06);cursor:pointer;background:#1c1c1c;color:white;flex:1;}
-.choice.correct{background:var(--lime);color:#04270b;}
-.choice.wrong{background:var(--orange);color:#2c1c00;}
-.choice.selected{outline:2px solid var(--softblue);}
-input.choiceInput{width:100%;padding:6px;border-radius:6px;border:1px solid rgba(255,255,255,0.2);background:var(--brick);color:white;}
-.panelFooter{display:flex;justify-content:space-between;align-items:center;}
-.btn{padding:6px 10px;border-radius:8px;border:none;cursor:pointer;}
-.btn.primary{background:var(--lime);color:#04270b;}
-.btn.ghost{background:transparent;border:1px solid rgba(255,255,255,0.2);color:white;}
+.header {text-align:center; margin-bottom:20px;}
+.header h1{margin:0;font-size:28px;color:#fff;}
+.header .sub{font-size:14px;color:#aaa;}
+#modeToggle {margin-top:10px; padding:4px 6px; border-radius:6px; border:none;}
+.board {display:grid; grid-template-columns:repeat(3,150px); grid-gap:12px;}
+.cell {
+  height:150px; display:flex; align-items:center; justify-content:center; 
+  background: rgba(255,255,255,0.05); border-radius:12px; color:#fff; font-weight:600; 
+  cursor:pointer; transition:0.2s; text-align:center; padding:6px; font-size:16px;
+}
+.cell:hover {background: rgba(155,229,106,0.15);}
+.modal {display:none; position:fixed; inset:0; background:rgba(0,0,0,0.6); align-items:center; justify-content:center;}
+.panel {background:rgba(255,255,255,0.05); padding:20px; border-radius:12px; width:90%; max-width:500px; max-height:80%; overflow-y:auto;}
+.question {margin-bottom:12px;}
+.question h4 {margin:0 0 4px 0; font-size:14px;}
+.choice {display:block; margin:3px 0; padding:6px 8px; border-radius:6px; cursor:pointer; background:rgba(255,255,255,0.05);}
+.choice:hover {background:rgba(155,229,106,0.15);}
+.correct {background:lime;color:#000;}
+.wrong {background:orange;color:#000;}
+input.answer {width:100%; padding:6px; border-radius:6px; border:none; margin-top:4px; background: rgba(255,255,255,0.05); color:#fff;}
+input.answer:focus {outline:2px solid #9be56a; background: rgba(155,229,106,0.05);}
 </style>
 </head>
 <body>
 
 <div class="header">
   <h1>INTUITY</h1>
-  <div class="sub">Intuitive & Immersive</div>
-  <div class="author">Majid Nashtai</div>
+  <div class="sub">Intuitive & Immersive — Majid Nashtai</div>
+  <select id="modeToggle">
+    <option value="advance">B2/C1 Mode</option>
+    <option value="elementary">A2 Mode</option>
+  </select>
 </div>
 
-<div class="controls">
-  <div class="scores">
-    <div>X: <span id="scoreX">0</span></div>
-    <div>O: <span id="scoreO">0</span></div>
-  </div>
-  <div class="toggle">
-    <label>B2/C1 <input type="checkbox" id="modeToggle"></label>
-  </div>
-</div>
-
-<div class="boardWrap">
-  <div class="grid" id="grid"></div>
-</div>
+<div class="board" id="board"></div>
 
 <div class="modal" id="modal">
-  <div class="panel">
-    <h4 id="modalQ"></h4>
-    <div class="choices" id="modalChoices"></div>
-    <input type="text" class="choiceInput" id="modalInput" style="display:none;">
-    <div class="panelFooter">
-      <button class="btn ghost" id="closeBtn">Close</button>
-      <button class="btn primary" id="submitBtn">Submit</button>
-    </div>
-  </div>
+  <div class="panel" id="modalContent"></div>
 </div>
 
 <script>
-let mode='elementary'; // default
-let boardState=Array(9).fill(null);
-let player='X';
-let scores={X:0,O:0};
-let activeIndex=null;
-let questionsData={};
+let questionsData = {};
+let mode = 'advance';
+let boardState = Array(9).fill(null); // store owner X/O
 
-async function loadJSON(){ 
-  const file = mode==='elementary'?'elementary-mode.json':'advance-mode.json';
-  const res = await fetch(file);
-  questionsData = await res.json();
+async function loadJSON(){
+  const fileName = mode === 'advance' ? 'advance-mode.json' : 'elementary-mode.json';
+  try{
+    const res = await fetch(fileName);
+    questionsData = await res.json();
+    renderGrid();
+  } catch(e){
+    console.error('Error loading JSON:', e);
+    questionsData = {};
+  }
 }
 
-function createGrid(){
-  const grid=document.getElementById('grid'); grid.innerHTML='';
-  const topics=[
-    ["Sports","English","Music"],
-    ["English","Famous People","English"],
-    ["Countries","English","Cities"]
-  ];
-  topics.flat().forEach((topic,i)=>{
+function renderGrid(){
+  const board = document.getElementById('board');
+  board.innerHTML='';
+  const topics = questionsData.topics || Array(9).fill('').map((_,i)=>`Square${i+1}`);
+  topics.forEach((topic,i)=>{
     const cell=document.createElement('div');
     cell.className='cell';
-    cell.textContent=topic;
-    cell.dataset.index=i;
-    cell.dataset.topic=topic;
-    cell.addEventListener('click',()=>openModal(i));
-    grid.appendChild(cell);
+
+    if(boardState[i]){
+      cell.textContent=boardState[i].owner;
+      cell.style.color = boardState[i].owner==='X' ? 'lime' : 'orange';
+      cell.style.fontSize='48px';
+      cell.style.fontWeight='bold';
+      cell.style.background='rgba(255,255,255,0.1)';
+    } else {
+      cell.textContent=topic;
+    }
+
+    cell.addEventListener('click',()=>{
+      if(!boardState[i]){
+        cell.style.background='rgba(139,69,19,0.2)'; // light brick while attempting
+        openModal(i,topic);
+      }
+    });
+
+    board.appendChild(cell);
   });
 }
 
-function openModal(index){
-  if(boardState[index]) return; // already claimed
-  activeIndex=index;
-  const topic=document.querySelector(`.cell[data-index='${index}']`).dataset.topic;
-  const questions=questionsData[topic]||[];
-  if(!questions.length) return;
-  const q=questions[Math.floor(Math.random()*questions.length)];
-  document.getElementById('modalQ').textContent=q.q;
-  const choicesDiv=document.getElementById('modalChoices'); choicesDiv.innerHTML='';
-  document.getElementById('modalInput').style.display='none';
-  if(q.type==='mcq'){
-    q.opts.forEach((o,i)=>{
-      const b=document.createElement('button'); b.className='choice'; b.textContent=o;
-      b.addEventListener('click',()=>{ document.querySelectorAll('.choice').forEach(x=>x.classList.remove('selected')); b.classList.add('selected'); });
-      choicesDiv.appendChild(b);
+function openModal(index, topic){
+  const modal = document.getElementById('modal');
+  const panel = document.getElementById('modalContent');
+  panel.innerHTML = `<h3>${topic}</h3>`;
+  
+  if(questionsData[topic]){
+    questionsData[topic].forEach((q,i)=>{
+      const div = document.createElement('div');
+      div.className='question';
+      div.innerHTML = `<h4>Q${i+1}: ${q.q}</h4>`;
+      if(q.type==='mcq'){
+        q.opts.forEach((opt,oi)=>{
+          const btn = document.createElement('div');
+          btn.className='choice';
+          btn.textContent=opt;
+          btn.addEventListener('click',()=>{
+            if(Number(oi)===q.a){
+              btn.classList.add('correct');
+              claimSquare(index,'X'); // current player X
+            } else {
+              btn.classList.add('wrong');
+            }
+          });
+          div.appendChild(btn);
+        });
+      } else if(q.type==='gap'){
+        const inp = document.createElement('input');
+        inp.className='answer';
+        inp.placeholder='Type answer';
+        inp.addEventListener('change',()=>{
+          if(inp.value.trim().toLowerCase()===String(q.a).toLowerCase()){
+            inp.classList.add('correct');
+            claimSquare(index,'X');
+          } else {
+            inp.classList.add('wrong');
+          }
+        });
+        div.appendChild(inp);
+      }
+      panel.appendChild(div);
     });
-  } else if(q.type==='gap'){
-    const inp=document.getElementById('modalInput'); inp.style.display='block'; inp.value=''; inp.dataset.answer=q.ans;
+  } else {
+    panel.innerHTML += '<p>No questions loaded</p>';
   }
-  document.getElementById('modal').classList.add('show');
-  document.querySelector(`.cell[data-index='${index}']`).classList.add('active');
+
+  modal.style.display='flex';
 }
 
-function closeModal(){ 
-  document.getElementById('modal').classList.remove('show'); 
-  if(activeIndex!==null) document.querySelector(`.cell[data-index='${activeIndex}']`).classList.remove('active');
-  activeIndex=null;
+function claimSquare(index,player){
+  if(!boardState[index]){
+    boardState[index]={owner:player};
+    renderGrid();
+  }
 }
 
-document.getElementById('closeBtn').addEventListener('click',close
-document.getElementById('closeBtn').addEventListener('click', closeModal);
-document.getElementById('submitBtn').addEventListener('click', () => {
-  if(activeIndex===null) return;
-  const cell = document.querySelector(`.cell[data-index='${activeIndex}']`);
-  const topic = cell.dataset.topic;
-  const questions = questionsData[topic] || [];
-  const q = questions[Math.floor(Math.random()*questions.length)];
-  
-  let correct = false;
-  if(q.type==='mcq'){
-    const selected = document.querySelector('.choice.selected');
-    if(!selected) return; // must select
-    correct = selected.textContent === q.ans;
-    if(correct) selected.classList.add('correct');
-    else selected.classList.add('wrong');
-  } else if(q.type==='gap'){
-    const inp = document.getElementById('modalInput');
-    correct = inp.value.trim().toLowerCase() === q.ans.toLowerCase();
-    inp.classList.add(correct ? 'correct' : 'wrong');
-  }
-
-  // award square
-  if(correct){
-    cell.classList.add(player==='X'?'claimed-X':'claimed-O');
-    boardState[activeIndex]=player;
-    scores[player] += 1;
-    document.getElementById('scoreX').textContent = scores.X;
-    document.getElementById('scoreO').textContent = scores.O;
-    player = player==='X'?'O':'X';
-  }
-  
-  setTimeout(()=>{
-    closeModal();
-  },800);
+document.getElementById('modeToggle').addEventListener('change',(e)=>{
+  mode=e.target.value;
+  boardState=Array(9).fill(null); // reset board
+  loadJSON();
 });
 
-// toggle mode
-document.getElementById('modeToggle').addEventListener('change', async (e)=>{
-  mode = e.target.checked ? 'advance' : 'elementary';
-  await loadJSON();
-  createGrid();
-  boardState=Array(9).fill(null);
-  scores={X:0,O:0};
-  document.getElementById('scoreX').textContent = '0';
-  document.getElementById('scoreO').textContent = '0';
+document.getElementById('modal').addEventListener('click',()=>{ 
+  document.getElementById('modal').style.display='none';
 });
 
-// initial load
-(async function init(){
-  await loadJSON();
-  createGrid();
-})();
+window.onload = loadJSON;
 </script>
+
 </body>
 </html>
