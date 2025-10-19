@@ -1,0 +1,19 @@
+{
+  "questions": [
+    {"q":"Which European city is known as the 'City of Canals' and is built on water?","type":"mcq","opts":["Amsterdam","Venice","Copenhagen","Prague"],"ans":1},
+    {"q":"Tokyo's rapid growth after WWII transformed it into what?","type":"mcq","opts":["An industrial hub","The world's most populous metropolitan area","A cultural center","A tech startup city"],"ans":1},
+    {"q":"Barcelona's unique architecture is primarily associated with which architect?","type":"mcq","opts":["Luis Barragán","Antoni Gaudí","Oscar Niemeyer","Frank Lloyd Wright"],"ans":1},
+    {"q":"New York City's nickname 'The Big Apple' ____ from a racing columnist in the 1920s.","type":"gap","ans":"originated"},
+    {"q":"Melbourne is consistently ranked as one of the world's most ____ cities for quality of life.","type":"gap","ans":"liveable"},
+    {"q":"Which South American city sits at the highest altitude of any major capital?","type":"mcq","opts":["Quito","La Paz","Bogotá","Lima"],"ans":1},
+    {"q":"Singapore's rapid transformation from a trading post to a financial hub is described as an ____ success story.","type":"gap","ans":"economic"},
+    {"q":"The Rio de Janeiro Christ the Redeemer statue was completed in which decade?","type":"mcq","opts":["1920s","1930s","1940s","1950s"],"ans":1},
+    {"q":"Cairo's location on the Nile River has made it strategically important for ____ millennia.","type":"gap","ans":"thousands of"},
+    {"q":"Istanbul ____ the distinction of being the only city on two continents.","type":"gap","ans":"holds"},
+    {"q":"Paris was originally a Roman settlement called ____.","type":"gap","ans":"Lutetia"},
+    {"q":"Dubai's development from a small fishing village to a metropolis happened primarily in the ____ century.","type":"gap","ans":"21st"},
+    {"q":"Which city hosted the 2016 Olympics and is known for its mountainous terrain?","type":"mcq","opts":["Tokyo","Rio de Janeiro","Beijing","Sydney"],"ans":1},
+    {"q":"London's financial district is known as the ____, named after a historical area.","type":"gap","ans":"City"},
+    {"q":"Toronto is Canada's largest city and is known for its cultural ____.","type":"gap","ans":"diversity"}
+  ]
+}
