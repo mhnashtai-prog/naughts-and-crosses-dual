@@ -1,1 +1,19 @@
-
+{
+  "questions": [
+    {"q":"Which instrument has black and white keys?","type":"mcq","opts":["Guitar","Piano","Drums","Violin"],"ans":1},
+    {"q":"How many strings does a guitar usually have?","type":"mcq","opts":["4","5","6","7"],"ans":2},
+    {"q":"What do you hit to play the drums?","type":"mcq","opts":["Strings","Keys","Sticks","Pedals"],"ans":2},
+    {"q":"Which instrument do you blow into?","type":"mcq","opts":["Piano","Guitar","Flute","Drums"],"ans":2},
+    {"q":"What is a group of musicians called?","type":"mcq","opts":["Team","Band","Crew","Gang"],"ans":1},
+    {"q":"Which singer is known as the 'King of Pop'?","type":"mcq","opts":["Elvis Presley","Michael Jackson","Prince","Freddie Mercury"],"ans":1},
+    {"q":"What type of music uses rap?","type":"mcq","opts":["Classical","Jazz","Hip-hop","Country"],"ans":2},
+    {"q":"Which app is yellow and plays music?","type":"mcq","opts":["Spotify","Apple Music","YouTube Music","Amazon Music"],"ans":0},
+    {"q":"What do you call words in a song?","type":"mcq","opts":["Notes","Melody","Lyrics","Rhythm"],"ans":2},
+    {"q":"Which instrument has four strings and a bow?","type":"mcq","opts":["Guitar","Violin","Cello","Harp"],"ans":1},
+    {"q":"What is the most popular music video website?","type":"mcq","opts":["TikTok","Instagram","YouTube","Facebook"],"ans":2},
+    {"q":"Which music genre is from Jamaica?","type":"mcq","opts":["Reggae","Jazz","Blues","Rock"],"ans":0},
+    {"q":"What do singers use to make their voice louder?","type":"mcq","opts":["Speaker","Microphone","Amplifier","Headphones"],"ans":1},
+    {"q":"Which cartoon character plays the drums?","type":"mcq","opts":["Mickey Mouse","SpongeBob","Patrick Star","Donald Duck"],"ans":2},
+    {"q":"What is a short musical performance called?","type":"mcq","opts":["Concert","Gig","Show","All of these"],"ans":3}
+  ]
+}
