@@ -1,0 +1,203 @@
+/* Paste the style.css content provided earlier in the conversation exactly as-is.
+   (To save repetition here, use the same style.css previously provided.) */
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700&display=swap');
+
+:root {
+  --bg-dark: #0b0b0b;
+  --panel-glass: rgba(0, 0, 0, 0.4);
+  --lime: #2fff91;
+  --text: #d0ffb3;
+  --radius: 20px;
+  --transition: 0.3s ease;
+}
+
+/* --- BASE --- */
+body {
+  margin: 0;
+  font-family: 'Inter', sans-serif;
+  background: var(--bg-dark);
+  color: var(--text);
+  overflow-x: hidden;
+}
+
+/* --- HEADER --- */
+header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 18px 30px;
+  background: rgba(10, 10, 10, 0.85);
+  backdrop-filter: blur(14px);
+  box-shadow: 0 0 25px rgba(0, 255, 128, 0.15);
+  position: sticky;
+  top: 0;
+  z-index: 999;
+}
+
+header h1 {
+  font-weight: 700;
+  font-size: 1.8rem;
+  letter-spacing: 1px;
+}
+
+.mode-toggle {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  font-weight: 500;
+  color: var(--text);
+}
+
+/* --- TOGGLE SWITCH --- */
+.toggle-switch {
+  position: relative;
+  width: 52px;
+  height: 26px;
+}
+.toggle-switch input {
+  opacity: 0;
+  width: 0;
+  height: 0;
+}
+.slider {
+  position: absolute;
+  cursor: pointer;
+  top: 0; left: 0; right: 0; bottom: 0;
+  background-color: #1f1f1f;
+  border-radius: 25px;
+  box-shadow: inset 2px 2px 5px #000, inset -2px -2px 5px var(--lime);
+  transition: var(--transition);
+}
+.slider:before {
+  position: absolute;
+  content: "";
+  height: 22px; width: 22px;
+  left: 2px; bottom: 2px;
+  background: var(--bg-dark);
+  border-radius: 50%;
+  box-shadow: 2px 2px 5px #000, -2px -2px 5px var(--lime);
+  transition: var(--transition);
+}
+input:checked + .slider:before {
+  transform: translateX(26px);
+}
+
+/* --- CONTAINER --- */
+.essay-container {
+  display: flex;
+  flex-direction: column;
+  gap: 30px;
+  padding: 30px 25px;
+  transition: var(--transition);
+}
+.essay-container.per-paragraph .paragraph:not(.active) {
+  display: none;
+}
+
+/* --- PARAGRAPH CARD --- */
+.paragraph {
+  background: var(--panel-glass);
+  border-radius: var(--radius);
+  box-shadow: inset 3px 3px 8px #000, inset -3px -3px 8px var(--lime);
+  transition: var(--transition);
+  overflow: hidden;
+}
+
+.paragraph-header {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 12px;
+  padding: 12px 15px;
+  background: rgba(0, 0, 0, 0.5);
+  border-radius: var(--radius) var(--radius) 0 0;
+  box-shadow: inset 2px 2px 6px #000, inset -2px -2px 6px var(--lime);
+}
+
+/* --- ICON BUTTONS --- */
+.icon-btn {
+  background: #121212;
+  border: none;
+  border-radius: 12px;
+  padding: 8px 12px;
+  color: var(--text);
+  font-size: 1.1rem;
+  cursor: pointer;
+  box-shadow: 2px 2px 6px #000, -2px -2px 6px var(--lime);
+  transition: var(--transition);
+}
+.icon-btn:hover {
+  transform: translateY(-2px);
+  box-shadow: 3px 3px 10px #000, -3px -3px 10px var(--lime);
+}
+.icon-btn:active {
+  transform: translateY(1px);
+  box-shadow: inset 2px 2px 6px #000, inset -2px -2px 6px var(--lime);
+}
+
+/* --- DROPDOWNS --- */
+.dropdown-container {
+  display: none;
+  margin: 8px 15px;
+  animation: fadeSlide 0.3s ease forwards;
+}
+.dropdown-container.show {
+  display: block;
+}
+select {
+  width: 100%;
+  padding: 10px;
+  border-radius: 12px;
+  border: none;
+  background: #121212;
+  color: var(--text);
+  box-shadow: 2px 2px 6px #000, -2px -2px 6px var(--lime);
+  cursor: pointer;
+  font-size: 0.95rem;
+  font-weight: 500;
+}
+@keyframes fadeSlide {
+  0% { opacity: 0; transform: translateY(-10px); }
+  100% { opacity: 1; transform: translateY(0); }
+}
+
+/* --- TEXTAREA --- */
+textarea {
+  width: 100%;
+  min-height: 90px;
+  padding: 14px;
+  margin-bottom: 12px;
+  border-radius: var(--radius);
+  border: none;
+  background: #0b0b0b;
+  color: var(--text);
+  box-shadow: inset 2px 2px 6px #000, inset -2px -2px 6px var(--lime);
+  resize: vertical;
+  font-family: 'Inter', sans-serif;
+  font-size: 0.95rem;
+}
+
+/* --- FLOATING PANEL --- */
+.floating {
+  position: fixed;
+  bottom: 20px;
+  right: 20px;
+  width: 350px;
+  max-height: 80%;
+  background: rgba(0, 0, 0, 0.8);
+  backdrop-filter: blur(12px);
+  border-radius: 25px;
+  box-shadow: 3px 3px 20px #000, -3px -3px 20px var(--lime);
+  display: flex;
+  flex-direction: column;
+  overflow: hidden;
+  transition: all 0.4s ease;
+  z-index: 999;
+}
+.floating.sleep { width: 60px; height: 60px; border-radius: 50%; overflow: hidden; }
+.panel-header { display:flex; justify-content:space-between; align-items:center; padding:10px 15px; cursor:grab; }
+.panel-header h4 { margin:0; color:#9aa0a6; }
+.panel-header button { background:#0b0b0b; border:none; color:var(--lime); padding:6px 10px; border-radius:10px; cursor:pointer; box-shadow:2px 2px 5px #000, -2px -2px 5px var(--lime); }
+.panel-content { flex:1; padding:10px; overflow-y:auto; white-space:pre-wrap; color:#dfffc9; font-size:14px; line-height:1.6; }
+
+/* --- RESP --- */
+@media (max-width:768px){ header h1 { font-size: 1.4rem; } .floating { width: 90%; right:5%; } }
