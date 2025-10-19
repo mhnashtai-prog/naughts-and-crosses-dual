@@ -1,1 +1,19 @@
-
+{
+  "questions": [
+    {"q":"Which city has the famous Eiffel Tower?","type":"mcq","opts":["London","Paris","Rome","Berlin"],"ans":1},
+    {"q":"Big Ben is a famous clock tower in which city?","type":"mcq","opts":["London","New York","Paris","Tokyo"],"ans":0},
+    {"q":"Which city is known for pizza and pasta?","type":"mcq","opts":["Rome","Paris","London","Madrid"],"ans":0},
+    {"q":"The Statue of Liberty is in which American city?","type":"mcq","opts":["Los Angeles","Chicago","New York","Boston"],"ans":2},
+    {"q":"Which city has kangaroos and the Opera House?","type":"mcq","opts":["Melbourne","Sydney","Perth","Brisbane"],"ans":1},
+    {"q":"Tokyo is the capital of which country?","type":"mcq","opts":["China","Korea","Japan","Thailand"],"ans":2},
+    {"q":"Which city has the famous red double-decker buses?","type":"mcq","opts":["Paris","London","Rome","Berlin"],"ans":1},
+    {"q":"The Great Wall is near which Chinese city?","type":"mcq","opts":["Shanghai","Beijing","Hong Kong","Guangzhou"],"ans":1},
+    {"q":"Which city is famous for flamenco dancing?","type":"mcq","opts":["Barcelona","Madrid","Lisbon","Rome"],"ans":1},
+    {"q":"The pyramids are near which Egyptian city?","type":"mcq","opts":["Cairo","Alexandria","Luxor","Aswan"],"ans":0},
+    {"q":"Which city has the famous Golden Gate Bridge?","type":"mcq","opts":["Los Angeles","Seattle","San Francisco","Portland"],"ans":2},
+    {"q":"Mickey Mouse lives in which city's theme park?","type":"mcq","opts":["Orlando","New York","Los Angeles","Miami"],"ans":0},
+    {"q":"Which city hosted the 2016 Summer Olympics?","type":"mcq","opts":["Beijing","London","Rio de Janeiro","Tokyo"],"ans":2},
+    {"q":"The Leaning Tower is in which Italian city?","type":"mcq","opts":["Rome","Pisa","Venice","Milan"],"ans":1},
+    {"q":"Which Canadian city is famous for maple syrup?","type":"mcq","opts":["Toronto","Montreal","Vancouver","Ottawa"],"ans":1}
+  ]
+}
