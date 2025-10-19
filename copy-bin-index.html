@@ -1,0 +1,242 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>INTUITY — English Grammar Quiz</title>
+<style>
+:root{
+  --bg:#0a0a0a;
+  --surface:#1a1a1e;
+  --card:#2a2a2f;
+  --accent:#6366f1;
+  --text:#e5e5e7;
+  --muted:#8e8e93;
+  font-family: -apple-system, 'SF Pro Display', 'Helvetica Neue', Arial, sans-serif;
+}
+*{box-sizing:border-box;}
+body{margin:0;background:linear-gradient(135deg,var(--bg),#0f0f15);color:var(--text);-webkit-font-smoothing:antialiased;}
+.container{max-width:1000px;margin:0 auto;padding:20px;}
+.header{text-align:center;margin-bottom:30px;}
+.header h1{margin:0;font-size:28px;color:var(--accent);font-weight:700;}
+.header p{margin:5px 0;font-size:13px;color:var(--muted);}
+.grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(160px,1fr));gap:16px;margin-bottom:30px;}
+.neumorphic-btn{
+  position:relative;
+  width:100%;
+  aspect-ratio:1;
+  border:none;
+  background:linear-gradient(145deg,#2d2d33,#1f1f25);
+  box-shadow:
+    -4px -4px 10px rgba(255,255,255,0.05),
+    4px 4px 10px rgba(0,0,0,0.5),
+    inset -2px -2px 5px rgba(255,255,255,0.03),
+    inset 2px 2px 5px rgba(0,0,0,0.3);
+  border-radius:18px;
+  cursor:pointer;
+  transition:all 0.3s cubic-bezier(0.4,0,0.2,1);
+  color:var(--text);
+  font-size:13px;
+  font-weight:600;
+  padding:12px;
+  display:flex;
+  flex-direction:column;
+  align-items:center;
+  justify-content:center;
+  text-align:center;
+  line-height:1.3;
+}
+.neumorphic-btn:hover{
+  transform:translateY(-2px);
+  box-shadow:
+    -6px -6px 14px rgba(255,255,255,0.08),
+    6px 6px 14px rgba(0,0,0,0.6),
+    inset -2px -2px 5px rgba(255,255,255,0.04),
+    inset 2px 2px 5px rgba(0,0,0,0.4);
+}
+.neumorphic-btn:active{
+  transform:translateY(1px);
+  box-shadow:
+    -2px -2px 6px rgba(255,255,255,0.03),
+    2px 2px 6px rgba(0,0,0,0.4),
+    inset -3px -3px 8px rgba(0,0,0,0.4),
+    inset 3px 3px 8px rgba(255,255,255,0.02);
+}
+.modal{position:fixed;inset:0;display:none;align-items:center;justify-content:center;background:rgba(0,0,0,0.7);z-index:50;padding:20px;}
+.modal.show{display:flex;}
+.panel{background:var(--card);border-radius:20px;padding:24px;width:100%;max-width:500px;max-height:80vh;overflow-y:auto;box-shadow:0 20px 60px rgba(0,0,0,0.6);}
+.panel-header{margin-bottom:20px;text-align:center;border-bottom:1px solid rgba(255,255,255,0.1);padding-bottom:12px;}
+.panel-title{font-size:18px;font-weight:700;color:var(--accent);margin:0;}
+.question{background:rgba(255,255,255,0.02);padding:14px;border-radius:12px;margin-bottom:14px;border:1px solid rgba(255,255,255,0.05);}
+.q-text{font-size:13px;margin:0 0 10px 0;font-weight:600;color:var(--text);}
+.choices{display:flex;flex-direction:column;gap:8px;}
+.choice-btn{
+  background:rgba(99,102,241,0.1);
+  border:1.5px solid rgba(99,102,241,0.2);
+  border-radius:10px;
+  padding:8px 12px;
+  color:var(--text);
+  font-size:12px;
+  cursor:pointer;
+  transition:all 0.2s;
+  text-align:left;
+  font-family:inherit;
+}
+.choice-btn:hover{background:rgba(99,102,241,0.2);border-color:rgba(99,102,241,0.4);}
+.choice-btn.selected{background:rgba(99,102,241,0.3);border-color:var(--accent);}
+.gap-input{
+  width:100%;
+  background:rgba(99,102,241,0.05);
+  border:1.5px solid rgba(99,102,241,0.2);
+  border-radius:10px;
+  padding:8px 12px;
+  color:var(--text);
+  font-size:12px;
+  font-family:inherit;
+}
+.gap-input:focus{outline:none;border-color:var(--accent);background:rgba(99,102,241,0.1);}
+.panel-footer{display:flex;gap:10px;margin-top:20px;justify-content:space-between;}
+.btn{padding:10px 16px;border-radius:10px;border:none;cursor:pointer;font-size:12px;font-weight:600;transition:all 0.2s;}
+.btn-close{background:rgba(255,255,255,0.05);color:var(--text);border:1px solid rgba(255,255,255,0.1);}
+.btn-close:hover{background:rgba(255,255,255,0.1);}
+.btn-submit{background:var(--accent);color:white;}
+.btn-submit:hover{background:#5558e3;transform:translateY(-1px);}
+.feedback{margin-top:10px;padding:10px;border-radius:10px;font-size:12px;text-align:center;}
+.feedback.correct{background:rgba(34,197,94,0.15);color:#22c55e;}
+.feedback.incorrect{background:rgba(239,68,68,0.15);color:#ef4444;}
+</style>
+</head>
+<body>
+<div class="container">
+  <div class="header">
+    <h1>INTUITY</h1>
+    <p>English Grammar Quiz</p>
+    <p style="color:var(--accent);font-weight:600;">Cambridge B2 Level</p>
+  </div>
+
+  <div class="grid" id="grid"></div>
+</div>
+
+<div class="modal" id="modal">
+  <div class="panel">
+    <div class="panel-header">
+      <h2 class="panel-title" id="categoryTitle">Grammar Rules</h2>
+    </div>
+    <div id="questionsContainer"></div>
+    <div class="panel-footer">
+      <button class="btn btn-close" onclick="closeModal()">Close</button>
+      <button class="btn btn-submit" onclick="submitAnswers()">Submit</button>
+    </div>
+    <div id="feedback"></div>
+  </div>
+</div>
+
+<script>
+// Load JSON data
+let quizData = {};
+let currentCategory = '';
+let currentAnswers = {};
+
+async function loadData() {
+  try {
+    const advancedRes = await fetch('advanced-mode.json');
+    quizData = await advancedRes.json();
+    buildGrid();
+  } catch (error) {
+    console.error('Error loading quiz data:', error);
+  }
+}
+
+function buildGrid() {
+  const grid = document.getElementById('grid');
+  grid.innerHTML = '';
+  
+  const categories = Object.keys(quizData);
+  categories.forEach(category => {
+    const btn = document.createElement('button');
+    btn.className = 'neumorphic-btn';
+    btn.textContent = category;
+    btn.onclick = () => openModal(category);
+    grid.appendChild(btn);
+  });
+}
+
+function openModal(category) {
+  currentCategory = category;
+  currentAnswers = {};
+  
+  document.getElementById('categoryTitle').textContent = category;
+  
+  const questions = quizData[category].slice(0, 5); // Only show 5 questions
+  const container = document.getElementById('questionsContainer');
+  container.innerHTML = '';
+  
+  questions.forEach((q, idx) => {
+    const qDiv = document.createElement('div');
+    qDiv.className = 'question';
+    
+    let html = `<div class="q-text">Q${idx + 1}. ${q.q}</div>`;
+    
+    if (q.type === 'mcq') {
+      html += '<div class="choices">';
+      q.opts.forEach((opt, oi) => {
+        html += `<button class="choice-btn" onclick="selectChoice('q${idx}', ${oi}, this)">${opt}</button>`;
+      });
+      html += '</div>';
+    } else if (q.type === 'gap') {
+      html += `<input type="text" class="gap-input" placeholder="Your answer" data-index="${idx}">`;
+    }
+    
+    qDiv.innerHTML = html;
+    container.appendChild(qDiv);
+  });
+  
+  document.getElementById('modal').classList.add('show');
+}
+
+function selectChoice(qId, optIndex, element) {
+  const btns = element.parentElement.querySelectorAll('.choice-btn');
+  btns.forEach(b => b.classList.remove('selected'));
+  element.classList.add('selected');
+  currentAnswers[qId] = optIndex;
+}
+
+function submitAnswers() {
+  const questions = quizData[currentCategory].slice(0, 5);
+  let correct = 0;
+  let feedback = '';
+  
+  questions.forEach((q, idx) => {
+    if (q.type === 'mcq') {
+      const selected = currentAnswers[`q${idx}`];
+      if (selected === q.ans) {
+        correct++;
+        feedback += `✓ Q${idx + 1} Correct\n`;
+      } else {
+        feedback += `✗ Q${idx + 1} Wrong (Answer: ${q.opts[q.ans]})\n`;
+      }
+    } else if (q.type === 'gap') {
+      const input = document.querySelector(`input[data-index="${idx}"]`);
+      const userAns = input.value.trim().toLowerCase();
+      if (userAns === q.ans.toLowerCase()) {
+        correct++;
+        feedback += `✓ Q${idx + 1} Correct\n`;
+      } else {
+        feedback += `✗ Q${idx + 1} Wrong (Answer: ${q.ans})\n`;
+      }
+    }
+  });
+  
+  const feedbackEl = document.getElementById('feedback');
+  feedbackEl.className = correct === questions.length ? 'feedback correct' : 'feedback incorrect';
+  feedbackEl.textContent = `${correct}/${questions.length} Correct\n${feedback}`;
+}
+
+function closeModal() {
+  document.getElementById('modal').classList.remove('show');
+}
+
+loadData();
+</script>
+</body>
+</html>
