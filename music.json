@@ -1,0 +1,19 @@
+{
+  "questions": [
+    {"q":"Spotify, Apple Music, and YouTube Music are examples of ____ services that have transformed how we consume music.","type":"gap","ans":"streaming"},
+    {"q":"Which music genre emerged from African American communities in New Orleans in the early 1900s?","type":"mcq","opts":["Blues","Jazz","Rap","Gospel"],"ans":1},
+    {"q":"K-pop groups like BTS and BLACKPINK have achieved massive global success, particularly among ____ audiences.","type":"gap","ans":"Gen Z"},
+    {"q":"The Grammy Awards are presented annually to recognize excellence in the ____ industry.","type":"gap","ans":"music"},
+    {"q":"Lo-fi hip-hop, popularized through YouTube playlists, is known for its ____ and studying vibes.","type":"gap","ans":"relaxing"},
+    {"q":"Taylor Swift's re-recording of her albums is called ____ and gives artists more creative control.","type":"gap","ans":"Taylor's Version"},
+    {"q":"Which artist broke Spotify's single-day streaming record with 'As It Was'?","type":"mcq","opts":["The Weeknd","Harry Styles","Drake","Post Malone"],"ans":1},
+    {"q":"Billie Eilish's debut album 'When We All Fall Asleep' was produced primarily by her brother ____.","type":"gap","ans":"Finneas"},
+    {"q":"Trap music, characterized by 808 drums and fast hi-hats, originated in the ____ United States.","type":"gap","ans":"Southern"},
+    {"q":"TikTok has become a ____ platform for launching new songs and discovering emerging artists.","type":"gap","ans":"crucial"},
+    {"q":"The Weeknd's 'Blinding Lights' became the most-streamed song on Spotify, surpassing previous records ____.","type":"gap","ans":"significantly"},
+    {"q":"Which music festival is held annually in California and is known for its coachella-like atmosphere and celebrity performances?","type":"mcq","opts":["Burning Man","Coachella","Lollapalooza","Bonnaroo"],"ans":1},
+    {"q":"Olivia Rodrigo's album 'SOUR' was released in 2021 when she was just ____ years old.","type":"gap","ans":"18"},
+    {"q":"Afrobeats, led by artists like Wizkid and Burna Boy, has become a ____ force in global popular music.","type":"gap","ans":"dominant"},
+    {"q":"The rise of bedroom pop and indie artists is largely due to ____ and home recording technology.","type":"gap","ans":"social media"}
+  ]
+}
