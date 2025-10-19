@@ -1,25 +1,37 @@
 {
   "Inversion": [
-    {"q":"____ had I realized how toxic social media could be would I have spent so much time online.","type":"mcq","opts":["Only then","Only if","Only when","Hardly"],"ans":0},
-    {"q":"Never before ____ (streaming services disrupt) the traditional entertainment industry like this.","type":"gap","ans":"have streaming services disrupted"},
-    {"q":"Rarely ____ (you see) such authentic connection between artists and fans on TikTok.","type":"gap","ans":"do you see"},
-    {"q":"____ should you dismiss the cultural impact of K-pop on global youth.","type":"mcq","opts":["In no way","By no means","Under no circumstances","All of the above"],"ans":3},
-    {"q":"Seldom ____ (algorithms reflect) genuine human taste; they're designed for engagement.","type":"gap","ans":"do algorithms reflect"}
+    {"q":"____ had I realized how addictive social media could be.","type":"mcq","opts":["Only then","Only if","Only when","Hardly"],"ans":0},
+    {"q":"Never before ____ such authentic artist-fan connections online.","type":"mcq","opts":["have we seen","we have seen","did we see","we saw"],"ans":0},
+    {"q":"Rarely ____ algorithms reflect genuine human preferences.","type":"mcq","opts":["do","does","are","is"],"ans":0},
+    {"q":"____ should you dismiss K-pop's cultural impact.","type":"mcq","opts":["In no way","By no means","Under no circumstances","All of the above"],"ans":3},
+    {"q":"Seldom ____ such dedication to environmental activism.","type":"mcq","opts":["do we witness","we witness","are we witnessing","we are witnessing"],"ans":0}
   ],
   "ThirdConditional": [
-    {"q":"If Spotify ____ (not exist), the music industry would look completely different today.","type":"gap","ans":"had not existed"},
-    {"q":"Had TikTok not emerged when it did, ____ (social media landscape / be) far less competitive.","type":"gap","ans":"the social media landscape would be"},
-    {"q":"____ Gen Z discovered vinyl records earlier, we might not have this retro revival.","type":"mcq","opts":["If","Had","Should","Unless"],"ans":1},
-    {"q":"If influencers ____ (not have) such reach, brand partnerships wouldn't dominate content creation.","type":"gap","ans":"did not have"},
-    {"q":"Had NFTs ____ (prove) more valuable, artists would still be rushing to mint them.","type":"gap","ans":"proven"}
+    {"q":"If Spotify ____ existed, music distribution would be completely different.","type":"mcq","opts":["had not","has not","did not","would not"],"ans":0},
+    {"q":"Had TikTok not emerged, social media ____ far less competitive.","type":"mcq","opts":["would be","will be","would have been","is"],"ans":2},
+    {"q":"____ Gen Z discovered vinyl earlier, the retro revival might not have happened.","type":"mcq","opts":["If","Had","Should","Unless"],"ans":1},
+    {"q":"If streaming platforms ____ emerged, we'd still buy physical albums.","type":"mcq","opts":["hadn't","hasn't","didn't","wouldn't"],"ans":0},
+    {"q":"The music industry ____ transformed if downloads had remained popular.","type":"mcq","opts":["wouldn't have been","won't be","isn't","wasn't"],"ans":0}
   ],
   "PastModals": [
-    {"q":"The artist ____ (must perform) at that festival—everyone's still talking about it.","type":"gap","ans":"must have performed"},
-    {"q":"You ____ (could have discovered) this band years ago if you'd explored indie music.","type":"gap","ans":"could have discovered"},
-    {"q":"The algorithm ____ (might recommend) this song to you based on your listening history.","type":"gap","ans":"might have recommended"},
-    {"q":"They ____ (should have collaborated) sooner; their chemistry is undeniable.","type":"gap","ans":"should have collaborated"},
-    {"q":"The tour ____ (may have been) cancelled due to the lead singer's injury.","type":"gap","ans":"may have been"}
+    {"q":"The artist ____ performed at that festival—everyone's talking about it.","type":"mcq","opts":["must have","must","should have","could"],"ans":0},
+    {"q":"You ____ discovered this band earlier if you'd explored indie music.","type":"mcq","opts":["could have","could","should","might"],"ans":0},
+    {"q":"The algorithm ____ recommended this based on your history.","type":"mcq","opts":["might have","might","should have","could"],"ans":0},
+    {"q":"They ____ collaborated sooner; their chemistry is undeniable.","type":"mcq","opts":["should have","should","must have","could have"],"ans":0},
+    {"q":"The tour ____ cancelled due to the pandemic.","type":"mcq","opts":["may have been","may be","might be","could be"],"ans":0}
   ],
   "PhrasalVerbs": [
-    {"q":"The scandal ____ the artist's career for several years.","type":"mcq","opts":["derailed","set back","cut short","wiped out"],"ans":1},
-    {"q":"Streaming platforms
+    {"q":"The scandal ____ the artist's career temporarily.","type":"mcq","opts":["set back","put off","turned down","gave up"],"ans":0},
+    {"q":"Streaming platforms have ____ traditional record labels.","type":"mcq","opts":["taken over","put up with","looked after","given away"],"ans":0},
+    {"q":"The band decided to ____ their reunion tour indefinitely.","type":"mcq","opts":["put off","set up","take over","give in"],"ans":0},
+    {"q":"She finally ____ her toxic management contract.","type":"mcq","opts":["broke off","took over","set back","put through"],"ans":0},
+    {"q":"The label tried to ____ her creative freedom.","type":"mcq","opts":["clamp down on","look up to","put up with","give away"],"ans":0}
+  ],
+  "LinkingWords": [
+    {"q":"____ the comprehensive data, the study's conclusions remain controversial.","type":"mcq","opts":["In light of","In case of","Regardless of","In spite of"],"ans":0},
+    {"q":"Social media engagement increased; ____, genuine connections declined.","type":"mcq","opts":["however","moreover","therefore","furthermore"],"ans":0},
+    {"q":"____ his immense talent, he struggled with mental health issues.","type":"mcq","opts":["Despite","Although","Because","Since"],"ans":0},
+    {"q":"Streaming revenue grew; ____, artists' earnings decreased.","type":"mcq","opts":["nevertheless","moreover","therefore","furthermore"],"ans":0},
+    {"q":"She achieved success ____ facing numerous obstacles.","type":"mcq","opts":["despite","although","because","since"],"ans":0}
+  ]
+}
