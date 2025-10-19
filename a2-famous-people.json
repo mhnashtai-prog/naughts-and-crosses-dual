@@ -1,1 +1,19 @@
-
+{
+  "questions": [
+    {"q":"Who painted the Mona Lisa?","type":"mcq","opts":["Picasso","Leonardo da Vinci","Van Gogh","Michelangelo"],"ans":1},
+    {"q":"Which scientist discovered gravity with an apple?","type":"mcq","opts":["Einstein","Newton","Galileo","Darwin"],"ans":1},
+    {"q":"Who created Mickey Mouse?","type":"mcq","opts":["Walt Disney","Dr. Seuss","Stan Lee","Jim Henson"],"ans":0},
+    {"q":"Which famous footballer plays for Portugal?","type":"mcq","opts":["Messi","Neymar","Ronaldo","Mbappé"],"ans":2},
+    {"q":"Who wrote the Harry Potter books?","type":"mcq","opts":["J.K. Rowling","Roald Dahl","C.S. Lewis","J.R.R. Tolkien"],"ans":0},
+    {"q":"Which girl wanted to go to school in Pakistan?","type":"mcq","opts":["Anne Frank","Malala","Mother Teresa","Rosa Parks"],"ans":1},
+    {"q":"Who was the first person on the moon?","type":"mcq","opts":["Buzz Aldrin","Yuri Gagarin","Neil Armstrong","John Glenn"],"ans":2},
+    {"q":"Which tennis player has won the most Grand Slams?","type":"mcq","opts":["Nadal","Federer","Djokovic","Serena Williams"],"ans":3},
+    {"q":"Who said 'I have a dream'?","type":"mcq","opts":["Nelson Mandela","Martin Luther King","Gandhi","Abraham Lincoln"],"ans":1},
+    {"q":"Which superhero is from DC Comics?","type":"mcq","opts":["Spider-Man","Iron Man","Batman","Captain America"],"ans":2},
+    {"q":"Who is the youngest self-made billionaire?","type":"mcq","opts":["Mark Zuckerberg","Elon Musk","Kylie Jenner","Bill Gates"],"ans":2},
+    {"q":"Which footballer is from Argentina?","type":"mcq","opts":["Ronaldo","Messi","Neymar","Mbappé"],"ans":1},
+    {"q":"Who created the iPhone?","type":"mcq","opts":["Bill Gates","Steve Jobs","Elon Musk","Mark Zuckerberg"],"ans":1},
+    {"q":"Which singer is known for 'Shake It Off'?","type":"mcq","opts":["Ariana Grande","Taylor Swift","Billie Eilish","Selena Gomez"],"ans":1},
+    {"q":"Who climbed Mount Everest first?","type":"mcq","opts":["Edmund Hillary","Reinhold Messner","Bear Grylls","Chris Bonington"],"ans":0}
+  ]
+}
