@@ -1,167 +1,263 @@
-<!DOCTYPE html>
+<!doctype html>
 <html lang="en">
 <head>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>INTUITY — Naughts & Crosses</title>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>INTUITY — Naughts & Crosses Dual Mode</title>
 <style>
-body {
-  margin:0; font-family: -apple-system, 'SF Pro Text', Helvetica, Arial, sans-serif; 
-  background: #060606; color: #dfeee0; display:flex; flex-direction:column; align-items:center; padding:20px;
+:root{
+  --bg:#060606; --muted:#dfeee0; --lime:#9be56a; --orange:#ffa24b; --softblue:#5aa1f2;
+  --card-pad:16px; --accent-bezier:cubic-bezier(.4,0,.2,1);
+  font-family: -apple-system, 'SF Pro Text', 'Helvetica Neue', Arial, sans-serif;
 }
-.header {text-align:center; margin-bottom:20px;}
-.header h1{margin:0;font-size:28px;color:#fff;}
-.header .sub{font-size:14px;color:#aaa;}
-#modeToggle {margin-top:10px; padding:4px 6px; border-radius:6px; border:none;}
-.board {display:grid; grid-template-columns:repeat(3,150px); grid-gap:12px;}
-.cell {
-  height:150px; display:flex; align-items:center; justify-content:center; 
-  background: rgba(255,255,255,0.05); border-radius:12px; color:#fff; font-weight:600; 
-  cursor:pointer; transition:0.2s; text-align:center; padding:6px; font-size:16px;
-}
-.cell:hover {background: rgba(155,229,106,0.15);}
-.modal {display:none; position:fixed; inset:0; background:rgba(0,0,0,0.6); align-items:center; justify-content:center;}
-.panel {background:rgba(255,255,255,0.05); padding:20px; border-radius:12px; width:90%; max-width:500px; max-height:80%; overflow-y:auto;}
-.question {margin-bottom:12px;}
-.question h4 {margin:0 0 4px 0; font-size:14px;}
-.choice {display:block; margin:3px 0; padding:6px 8px; border-radius:6px; cursor:pointer; background:rgba(255,255,255,0.05);}
-.choice:hover {background:rgba(155,229,106,0.15);}
-.correct {background:lime;color:#000;}
-.wrong {background:orange;color:#000;}
-input.answer {width:100%; padding:6px; border-radius:6px; border:none; margin-top:4px; background: rgba(255,255,255,0.05); color:#fff;}
-input.answer:focus {outline:2px solid #9be56a; background: rgba(155,229,106,0.05);}
+*{box-sizing:border-box;}
+body{margin:0;height:100%;background:linear-gradient(180deg,#050606,#071113);color:var(--muted);-webkit-font-smoothing:antialiased;}
+.container{max-width:900px;margin:20px auto;padding:16px;display:flex;flex-direction:column;gap:16px;}
+.header{text-align:center;margin-bottom:10px;}
+.header h1{margin:0;font-size:22px;color:whitesmoke;font-weight:600;}
+.header .sub{font-size:13px;color:rgba(255,255,255,0.7);}
+.header .author{font-size:12px;color:rgba(255,255,255,0.45);}
+.boardWrap{background:rgba(255,255,255,0.02);border-radius:16px;padding:16px;display:flex;flex-direction:column;gap:12px;position:relative;}
+.topBar{display:flex;justify-content:space-between;align-items:center;margin-bottom:12px;}
+.players{display:flex;gap:10px;}
+.player{padding:6px 10px;border-radius:12px;background:rgba(255,255,255,0.03);display:flex;align-items:center;gap:6px;font-size:14px;}
+.toggleWrap{display:flex;align-items:center;gap:6px;}
+.toggleLabel{font-size:12px;}
+.toggleSwitch{position:relative;display:inline-block;width:50px;height:24px;}
+.toggleSwitch input{opacity:0;width:0;height:0;}
+.slider{position:absolute;cursor:pointer;top:0;left:0;right:0;bottom:0;background:#333;border-radius:34px;transition:.4s;}
+.slider:before{position:absolute;content:"";height:18px;width:18px;left:3px;bottom:3px;background:white;border-radius:50%;transition:.4s;}
+input:checked + .slider{background:var(--softblue);}
+input:checked + .slider:before{transform:translateX(26px);}
+.grid{display:grid;grid-template-columns:repeat(3,1fr);gap:12px;}
+.cell{aspect-ratio:1/1;border-radius:14px;background:rgba(255,255,255,0.05);display:flex;align-items:center;justify-content:center;font-size:16px;color:var(--softblue);cursor:pointer;transition:transform .25s,box-shadow .18s;position:relative;}
+.cell:hover{transform:translateY(-4px);box-shadow:0 8px 16px rgba(0,0,0,0.6);}
+.cell.claimed-X{background:var(--orange);color:#000;}
+.cell.claimed-O{background:var(--lime);color:#000;}
+.cell.active{box-shadow:0 0 12px rgba(255,255,255,0.12);}
+.modal{position:fixed;inset:0;display:none;align-items:center;justify-content:center;background:rgba(0,0,0,0.6);z-index:50;}
+.modal.show{display:flex;}
+.panel{background:rgba(255,255,255,0.05);border-radius:14px;padding:16px;width:90%;max-width:600px;display:flex;flex-direction:column;gap:12px;}
+.q{background:rgba(255,255,255,0.02);padding:10px;border-radius:10px;border:1px solid rgba(255,255,255,0.04);}
+.q h4{margin:0 0 6px 0;font-size:14px;}
+.choices{display:flex;flex-wrap:wrap;gap:8px;}
+.choice{padding:6px 10px;border-radius:8px;border:1px solid rgba(255,255,255,0.06);cursor:pointer;background:transparent;}
+.choice.selected{outline:2px solid rgba(255,255,255,0.1);}
+.choice.correct{background:var(--lime);}
+.choice.wrong{background:var(--orange);}
+input.choice{padding:6px 10px;border-radius:8px;border:1px solid rgba(255,255,255,0.06);width:100%;background:#111;color:#fff;}
+input.choice:focus{outline:2px solid var(--softblue);}
+.panelFooter{display:flex;justify-content:space-between;align-items:center;}
+.btn{padding:6px 10px;border-radius:10px;border:none;cursor:pointer;}
+.btn.primary{background:var(--softblue);color:#000;}
+.btn.ghost{background:transparent;border:1px solid rgba(255,255,255,0.05);color:#fff;}
 </style>
 </head>
 <body>
+<div class="container">
+  <div class="header">
+    <h1>INTUITY</h1>
+    <div class="sub">Intuitive & Immersive</div>
+    <div class="author">Majid Nashtai</div>
+  </div>
 
-<div class="header">
-  <h1>INTUITY</h1>
-  <div class="sub">Intuitive & Immersive — Majid Nashtai</div>
-  <select id="modeToggle">
-    <option value="advance">B2/C1 Mode</option>
-    <option value="elementary">A2 Mode</option>
-  </select>
+  <div class="boardWrap">
+    <div class="topBar">
+      <div class="players">
+        <div class="player" id="playerX">❌ <span id="scoreX">0</span></div>
+        <div class="player" id="playerO">⭕ <span id="scoreO">0</span></div>
+      </div>
+      <div class="toggleWrap">
+        <span class="toggleLabel">A2</span>
+        <label class="toggleSwitch">
+          <input type="checkbox" id="modeToggle">
+          <span class="slider"></span>
+        </label>
+        <span class="toggleLabel">B2/C1</span>
+      </div>
+    </div>
+
+    <div class="grid" id="grid"></div>
+  </div>
 </div>
 
-<div class="board" id="board"></div>
-
 <div class="modal" id="modal">
-  <div class="panel" id="modalContent"></div>
+  <div class="panel">
+    <div id="panelBody"></div>
+    <div class="panelFooter">
+      <button class="btn ghost" id="closeBtn">Close</button>
+      <button class="btn primary" id="submitBtn">Submit</button>
+    </div>
+  </div>
 </div>
 
 <script>
-let questionsData = {};
-let mode = 'advance';
-let boardState = Array(9).fill(null); // store owner X/O
+// ---------------------
+// Sample Data
+// ---------------------
+const A2_DATA = {
+  "English": [
+    {type:'gap',q:'I ___ to school every day.',a:'go'},
+    {type:'mcq',q:'He ___ breakfast in the morning.',opts:['eat','eats','eating'],a:1}
+  ],
+  "Music": [
+    {type:'mcq',q:'Which instrument has strings?',opts:['Flute','Violin','Drum'],a:1}
+  ]
+};
 
-async function loadJSON(){
-  const fileName = mode === 'advance' ? 'advance-mode.json' : 'elementary-mode.json';
-  try{
-    const res = await fetch(fileName);
-    questionsData = await res.json();
-    renderGrid();
-  } catch(e){
-    console.error('Error loading JSON:', e);
-    questionsData = {};
+const B2C1_DATA = {
+  "English": [
+    {type:'mcq',q:'Which is correct? "He ___ gone."',opts:['have','has','had'],a:1},
+    {type:'gap',q:'She ___ finished her homework.',a:'has'}
+  ],
+  "Music": [
+    {type:'mcq',q:'Who composed Fur Elise?',opts:['Mozart','Beethoven','Bach'],a:1}
+  ]
+};
+
+// ---------------------
+// State
+// ---------------------
+let currentMode = 'A2'; // default
+let currentData = A2_DATA;
+let boardState = Array(9).fill(null);
+let currentTurn = 'X';
+let activeIndex = null;
+
+// Topics
+const TOPICS = [
+  ['Music','English','Cities'],
+  ['English','Countries','English'],
+  ['Sport','English','Famous People']
+];
+
+// ---------------------
+// DOM Build Grid
+// ---------------------
+const grid = document.getElementById('grid');
+function buildGrid(){
+  grid.innerHTML = '';
+  for(let r=0;r<3;r++){
+    for(let c=0;c<3;c++){
+      const idx = r*3+c;
+      const cell = document.createElement('div');
+      cell.className = 'cell';
+      cell.dataset.index = idx;
+      cell.textContent = TOPICS[r][c];
+      cell.addEventListener('click',()=>openModal(idx));
+      grid.appendChild(cell);
+    }
+  }
+}
+buildGrid();
+
+// ---------------------
+// Toggle Mode
+// ---------------------
+document.getElementById('modeToggle').addEventListener('change',(e)=>{
+  currentMode = e.target.checked ? 'B2C1' : 'A2';
+  currentData = currentMode==='B2C1'? B2C1_DATA : A2_DATA;
+  resetBoard();
+});
+
+// ---------------------
+// Modal Logic
+// ---------------------
+const modal = document.getElementById('modal');
+const panelBody = document.getElementById('panelBody');
+const closeBtn = document.getElementById('closeBtn');
+const submitBtn = document.getElementById('submitBtn');
+
+function openModal(idx){
+  if(boardState[idx]) return; // already claimed
+  activeIndex = idx;
+  modal.classList.add('show');
+  renderQuestions(TOPICS[Math.floor(idx/3)][idx%3]);
+  document.querySelector(`.cell[data-index='${idx}']`).classList.add('active');
+}
+
+function closeModal(){
+  modal.classList.remove('show');
+  if(activeIndex!==null){
+    document.querySelector(`.cell[data-index='${activeIndex}']`).classList.remove('active');
+    activeIndex = null;
   }
 }
 
-function renderGrid(){
-  const board = document.getElementById('board');
-  board.innerHTML='';
-  const topics = questionsData.topics || Array(9).fill('').map((_,i)=>`Square${i+1}`);
-  topics.forEach((topic,i)=>{
-    const cell=document.createElement('div');
-    cell.className='cell';
+closeBtn.addEventListener('click',closeModal);
 
-    if(boardState[i]){
-      cell.textContent=boardState[i].owner;
-      cell.style.color = boardState[i].owner==='X' ? 'lime' : 'orange';
-      cell.style.fontSize='48px';
-      cell.style.fontWeight='bold';
-      cell.style.background='rgba(255,255,255,0.1)';
-    } else {
-      cell.textContent=topic;
+// ---------------------
+// Render Questions
+// ---------------------
+function renderQuestions(topic){
+  panelBody.innerHTML='';
+  const questions = currentData[topic] || [];
+  questions.forEach((q,i)=>{
+    const qdiv = document.createElement('div'); qdiv.className='q';
+    const h = document.createElement('h4'); h.textContent = `Q${i+1}. ${q.q}`; qdiv.appendChild(h);
+
+    if(q.type==='mcq'){
+      const ch = document.createElement('div'); ch.className='choices';
+      q.opts.forEach((opt,oi)=>{
+        const btn = document.createElement('button'); btn.className='choice'; btn.textContent=opt;
+        btn.addEventListener('click',()=>btn.classList.toggle('selected'));
+        ch.appendChild(btn);
+      });
+      qdiv.appendChild(ch);
+    } else if(q.type==='gap'){
+      const inp = document.createElement('input'); inp.className='choice'; inp.placeholder='type answer';
+      qdiv.appendChild(inp);
     }
-
-    cell.addEventListener('click',()=>{
-      if(!boardState[i]){
-        cell.style.background='rgba(139,69,19,0.2)'; // light brick while attempting
-        openModal(i,topic);
-      }
-    });
-
-    board.appendChild(cell);
+    panelBody.appendChild(qdiv);
   });
 }
 
-function openModal(index, topic){
-  const modal = document.getElementById('modal');
-  const panel = document.getElementById('modalContent');
-  panel.innerHTML = `<h3>${topic}</h3>`;
-  
-  if(questionsData[topic]){
-    questionsData[topic].forEach((q,i)=>{
-      const div = document.createElement('div');
-      div.className='question';
-      div.innerHTML = `<h4>Q${i+1}: ${q.q}</h4>`;
-      if(q.type==='mcq'){
-        q.opts.forEach((opt,oi)=>{
-          const btn = document.createElement('div');
-          btn.className='choice';
-          btn.textContent=opt;
-          btn.addEventListener('click',()=>{
-            if(Number(oi)===q.a){
-              btn.classList.add('correct');
-              claimSquare(index,'X'); // current player X
-            } else {
-              btn.classList.add('wrong');
-            }
-          });
-          div.appendChild(btn);
-        });
-      } else if(q.type==='gap'){
-        const inp = document.createElement('input');
-        inp.className='answer';
-        inp.placeholder='Type answer';
-        inp.addEventListener('change',()=>{
-          if(inp.value.trim().toLowerCase()===String(q.a).toLowerCase()){
-            inp.classList.add('correct');
-            claimSquare(index,'X');
-          } else {
-            inp.classList.add('wrong');
-          }
-        });
-        div.appendChild(inp);
-      }
-      panel.appendChild(div);
-    });
-  } else {
-    panel.innerHTML += '<p>No questions loaded</p>';
+// ---------------------
+// Submit Answers
+// ---------------------
+submitBtn.addEventListener('click',()=>{
+  if(activeIndex===null) return;
+  const cell = document.querySelector(`.cell[data-index='${activeIndex}']`);
+  const topic = TOPICS[Math.floor(activeIndex/3)][activeIndex%3];
+  const questions = currentData[topic] || [];
+  let correct = true;
+  const qDivs = Array.from(panelBody.querySelectorAll('.q'));
+
+  questions.forEach((q,i)=>{
+    const qdiv = qDivs[i];
+    if(q.type==='mcq'){
+      const selected = Array.from(qdiv.querySelectorAll('.choice.selected'));
+      const correctIndex = q.a;
+      if(selected.length===1 && selected[0].textContent===q.opts[correctIndex]){
+        selected[0].classList.add('correct');
+      } else { correct=false; selected.forEach(s=>s.classList.add('wrong'));}
+    } else if(q.type==='gap'){
+      const val = qdiv.querySelector('input').value.trim().toLowerCase();
+      if(val===q.a.toLowerCase()){ qdiv.querySelector('input').classList.add('correct'); } else { correct=false; qdiv.querySelector('input').classList.add('wrong'); }
+    }
+  });
+
+  // Assign tile
+  if(correct){ 
+    boardState[activeIndex]=currentTurn;
+    cell.classList.add(currentTurn==='X'?'claimed-X':'claimed-O');
+    document.getElementById(currentTurn==='X'?'scoreX':'scoreO').textContent = parseInt(document.getElementById(currentTurn==='X'?'scoreX':'scoreO').textContent)+1;
+    currentTurn = currentTurn==='X'?'O':'X';
   }
 
-  modal.style.display='flex';
-}
-
-function claimSquare(index,player){
-  if(!boardState[index]){
-    boardState[index]={owner:player};
-    renderGrid();
-  }
-}
-
-document.getElementById('modeToggle').addEventListener('change',(e)=>{
-  mode=e.target.value;
-  boardState=Array(9).fill(null); // reset board
-  loadJSON();
+  closeModal();
 });
 
-document.getElementById('modal').addEventListener('click',()=>{ 
-  document.getElementById('modal').style.display='none';
-});
-
-window.onload = loadJSON;
+// ---------------------
+// Reset Board
+// ---------------------
+function resetBoard(){
+  boardState.fill(null);
+  currentTurn='X';
+  document.getElementById('scoreX').textContent=0;
+  document.getElementById('scoreO').textContent=0;
+  buildGrid();
+}
 </script>
-
 </body>
 </html>
