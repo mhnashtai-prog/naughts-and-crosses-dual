@@ -1,0 +1,19 @@
+{
+  "questions": [
+    {"q":"Elon Musk co-founded which electric vehicle company that revolutionized the automotive industry?","type":"mcq","opts":["Rivian","Lucid","Tesla","Nio"],"ans":2},
+    {"q":"Malala Yousafzai became the youngest Nobel Peace Prize winner at age ____ for her advocacy of girls' education.","type":"gap","ans":"17"},
+    {"q":"Cristiano Ronaldo is widely ____ as one of the greatest footballers of all time.","type":"gap","ans":"regarded"},
+    {"q":"Greta Thunberg rose to prominence as a climate ____ activist, beginning her protests in 2018.","type":"gap","ans":"change"},
+    {"q":"Oprah Winfrey built a media empire starting from which position in television?","type":"mcq","opts":["Producer","News anchor","Talk show host","Journalist"],"ans":2},
+    {"q":"Mark Zuckerberg created Facebook while he was a student at which university?","type":"mcq","opts":["Harvard","MIT","Stanford","Yale"],"ans":0},
+    {"q":"Serena Williams has won ____ Grand Slam singles titles, making her one of tennis's greatest athletes.","type":"gap","ans":"23"},
+    {"q":"Dwayne 'The Rock' Johnson transitioned from professional wrestling to become a ____ star.","type":"gap","ans":"film"},
+    {"q":"Virat Kohli is a professional cricketer from which country and is considered one of the modern greats?","type":"mcq","opts":["Pakistan","Bangladesh","India","Sri Lanka"],"ans":2},
+    {"q":"Alexandria Ocasio-Cortez became one of the youngest members of the U.S. Congress at age ____.","type":"gap","ans":"29"},
+    {"q":"Elon Musk's ambitious projects include SpaceX for space exploration and Neuralink for ____ interfaces.","type":"gap","ans":"brain-computer"},
+    {"q":"Stephen Hawking was a theoretical physicist known for his work on ____ holes.","type":"gap","ans":"black"},
+    {"q":"Rihanna is not only a successful musician but also founded a cosmetics brand called ____.","type":"gap","ans":"Fenty"},
+    {"q":"Jeff Bezos founded Amazon, initially as an online ____ retailer.","type":"gap","ans":"book"},
+    {"q":"Emma Watson became an advocate for gender equality through her ____ HeForShe campaign.","type":"gap","ans":"UN"}}
+  ]
+}
