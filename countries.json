@@ -1,0 +1,19 @@
+{
+  "questions": [
+    {"q":"Switzerland is famous for its neutrality in international conflicts. This policy has been maintained since which century?","type":"mcq","opts":["16th","17th","18th","19th"],"ans":2},
+    {"q":"Japan's economic miracle in the post-WWII period is often called the ____ Boom.","type":"gap","ans":"Japanese"},
+    {"q":"Brazil is home to the world's largest ____ forest.","type":"gap","ans":"rainforest"},
+    {"q":"Which country has the most official languages in the world?","type":"mcq","opts":["India","Nigeria","Papua New Guinea","Indonesia"],"ans":2},
+    {"q":"The Nordic model of social democracy is ____ by countries like Norway and Denmark.","type":"gap","ans":"exemplified"},
+    {"q":"Australia is the only country that is also a ____.","type":"gap","ans":"continent"},
+    {"q":"New Zealand was one of the last major landmasses to be ____ by humans.","type":"gap","ans":"settled"},
+    {"q":"Egypt's economy ____ heavily on tourism and the Suez Canal revenue.","type":"gap","ans":"depends"},
+    {"q":"Canada shares the world's longest international border with which country?","type":"mcq","opts":["Mexico","Russia","Greenland","The USA"],"ans":3},
+    {"q":"South Korea's rapid industrialization transformed it from a developing nation to a ____ economy.","type":"gap","ans":"developed"},
+    {"q":"Portugal is one of Europe's oldest nation-states, with borders established in which century?","type":"mcq","opts":["12th","13th","14th","15th"],"ans":1},
+    {"q":"India's IT sector has made it a global hub for ____ and software development.","type":"gap","ans":"technology"},
+    {"q":"Mexico City is built on the ruins of which ancient Aztec city?","type":"mcq","opts":["Tenochtitlan","Teotihuacan","Chichen Itza","Tulum"],"ans":0},
+    {"q":"The Netherlands has ____ below sea level, protected by an extensive dike system.","type":"gap","ans":"land"},
+    {"q":"Iceland's energy comes primarily from ____ and geothermal sources.","type":"gap","ans":"hydroelectric"}}
+  ]
+}
