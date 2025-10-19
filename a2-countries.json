@@ -1,1 +1,19 @@
-
+{
+  "questions": [
+    {"q":"Which country has the most people in the world?","type":"mcq","opts":["India","USA","China","Russia"],"ans":2},
+    {"q":"Where do kangaroos come from?","type":"mcq","opts":["Africa","Australia","America","Asia"],"ans":1},
+    {"q":"Which country is shaped like a boot?","type":"mcq","opts":["Spain","Greece","Italy","Portugal"],"ans":2},
+    {"q":"Sushi comes from which country?","type":"mcq","opts":["China","Korea","Japan","Thailand"],"ans":2},
+    {"q":"Which country has pyramids and the River Nile?","type":"mcq","opts":["Egypt","Sudan","Ethiopia","Morocco"],"ans":0},
+    {"q":"Big Ben and the Queen are from which country?","type":"mcq","opts":["France","England","Scotland","Ireland"],"ans":1},
+    {"q":"Which country is famous for the Eiffel Tower?","type":"mcq","opts":["France","Belgium","Spain","Italy"],"ans":0},
+    {"q":"Tacos and burritos come from which country?","type":"mcq","opts":["Spain","Mexico","Argentina","Colombia"],"ans":1},
+    {"q":"Which country has 50 states?","type":"mcq","opts":["Canada","USA","Australia","Brazil"],"ans":1},
+    {"q":"Where does chocolate originally come from?","type":"mcq","opts":["Switzerland","Belgium","Mexico","France"],"ans":2},
+    {"q":"Which country has the Amazon rainforest?","type":"mcq","opts":["Colombia","Peru","Brazil","Venezuela"],"ans":2},
+    {"q":"Pandas come from which country?","type":"mcq","opts":["Japan","China","Korea","Vietnam"],"ans":1},
+    {"q":"Which country is famous for maple syrup?","type":"mcq","opts":["USA","Canada","Sweden","Finland"],"ans":1},
+    {"q":"The Parthenon temple is in which country?","type":"mcq","opts":["Italy","Turkey","Greece","Egypt"],"ans":2},
+    {"q":"Which country has more sheep than people?","type":"mcq","opts":["Ireland","Scotland","New Zealand","Wales"],"ans":2}
+  ]
+}
