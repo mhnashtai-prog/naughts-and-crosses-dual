@@ -41,13 +41,14 @@ input:checked + .slider:before{transform:translateX(26px);}
 .cell.claimed-X{background:var(--orange);color:#000;}
 .cell.claimed-O{background:var(--lime);color:#000;}
 .cell.active{box-shadow:0 0 12px rgba(255,255,255,0.12);}
-.modal{position:fixed;inset:0;display:none;align-items:center;justify-content:center;background:rgba(0,0,0,0.8);z-index:50;backdrop-filter:blur(5px);}
+.modal{position:fixed;inset:0;display:none;align-items:center;justify-content:center;background:rgba(0,0,0,0.8);z-index:50;backdrop-filter:blur(5px);padding:20px;}
 .modal.show{display:flex;}
-.panel{background:rgba(20,20,25,0.95);border-radius:20px;padding:24px;width:90%;max-width:600px;max-height:80vh;overflow-y:auto;display:flex;flex-direction:column;gap:14px;border:1px solid rgba(255,255,255,0.1);box-shadow:0 25px 50px rgba(0,0,0,0.8);}
-.q{background:rgba(255,255,255,0.04);padding:14px;border-radius:12px;border:1px solid rgba(255,255,255,0.08);}
-.q h4{margin:0 0 10px 0;font-size:14px;font-weight:600;color:var(--muted);}
-.choices{display:flex;flex-direction:column;gap:8px;}
-.choice{padding:10px 12px;border-radius:10px;border:1.5px solid rgba(255,255,255,0.15);cursor:pointer;background:rgba(255,255,255,0.03);transition:all 0.25s;font-size:13px;color:var(--muted);text-align:left;}
+.panel{background:rgba(20,20,25,0.95);border-radius:20px;padding:24px;width:100%;max-width:550px;max-height:85vh;overflow-y:auto;display:flex;flex-direction:column;gap:14px;border:1px solid rgba(255,255,255,0.1);box-shadow:0 25px 50px rgba(0,0,0,0.8);}
+.q{background:rgba(255,255,255,0.04);padding:12px;border-radius:12px;border:1px solid rgba(255,255,255,0.08);}
+.q h4{margin:0 0 10px 0;font-size:13px;font-weight:600;color:var(--muted);line-height:1.4;}
+.choices{display:grid;grid-template-columns:1fr 1fr;gap:8px;}
+.choices.col-1{grid-template-columns:1fr;}
+.choice{padding:8px 10px;border-radius:8px;border:1.5px solid rgba(255,255,255,0.15);cursor:pointer;background:rgba(255,255,255,0.03);transition:all 0.25s;font-size:12px;color:var(--muted);text-align:center;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;}
 .choice:hover{background:rgba(90,161,242,0.12);border-color:rgba(90,161,242,0.3);}
 .choice.selected{background:rgba(90,161,242,0.25);border-color:var(--softblue);color:var(--muted);font-weight:600;box-shadow:0 0 8px rgba(90,161,242,0.2);}
 .choice.correct{background:rgba(155,229,106,0.25);border-color:var(--lime);color:var(--lime);font-weight:600;}
@@ -105,6 +106,7 @@ let boardState = Array(9).fill(null);
 let currentTurn = 'X';
 let activeIndex = null;
 let currentQuestions = [];
+let selectedAnswers = {};
 
 const TOPICS_A2 = [
   ['SimplePresent','PresentContinuous','FrequencyAdverbs'],
@@ -117,15 +119,6 @@ const TOPICS_B2C1 = [
   ['English','Music','English'],
   ['FamousPeople','Countries','English']
 ];
-
-const TOPIC_FILES = {
-  'Cities': 'cities.json',
-  'Countries': 'countries.json',
-  'Sports': 'sports.json',
-  'Music': 'music.json',
-  'FamousPeople': 'famous-people.json',
-  'English': 'advanced-mode.json'
-};
 
 function getTopics() {
   return currentMode === 'A2' ? TOPICS_A2 : TOPICS_B2C1;
@@ -141,15 +134,14 @@ async function loadMode(mode) {
       const res = await fetch('elementary-mode.json');
       allTopicData = await res.json();
     } else {
-      // Load all topic files
-      for(const [topicName, fileName] of Object.entries(TOPIC_FILES)) {
-        if(fileName === 'advanced-mode.json') continue;
-        const res = await fetch(fileName);
+      const fileNames = ['cities.json', 'countries.json', 'sports.json', 'music.json', 'famous-people.json', 'advanced-mode.json'];
+      const topicNames = ['Cities', 'Countries', 'Sports', 'Music', 'FamousPeople', 'English'];
+      
+      for(let i = 0; i < fileNames.length; i++) {
+        const res = await fetch(fileNames[i]);
         const data = await res.json();
-        allTopicData[topicName] = data;
+        allTopicData[topicNames[i]] = data;
       }
-      const advRes = await fetch('advanced-mode.json');
-      allTopicData['English'] = await advRes.json();
     }
     buildGrid();
   } catch (error) {
@@ -192,6 +184,7 @@ const submitBtn = document.getElementById('submitBtn');
 function openModal(idx){
   if(boardState[idx]) return;
   activeIndex = idx;
+  selectedAnswers = {};
   modal.classList.add('show');
   boardWrap.classList.add('hidden');
   const topics = getTopics();
@@ -216,11 +209,12 @@ function renderQuestions(topic){
   
   let questions = [];
   if(currentMode === 'A2') {
-    questions = allTopicData[topic] ? allTopicData[topic].slice(0, 5) : [];
+    questions = allTopicData[topic] ? allTopicData[topic].filter(q => q.type === 'mcq').slice(0, 5) : [];
   } else {
     const topicData = allTopicData[topic];
     if(topicData && topicData.questions) {
-      questions = shuffleArray([...topicData.questions]).slice(0, 5);
+      questions = topicData.questions.filter(q => q.type === 'mcq');
+      questions = shuffleArray([...questions]).slice(0, 5);
     }
   }
   
@@ -237,16 +231,20 @@ function renderQuestions(topic){
 
     if(q.type==='mcq'){
       const ch = document.createElement('div'); 
-      ch.className='choices';
+      const optCount = q.opts.length;
+      ch.className = optCount > 2 ? 'choices' : 'choices col-1'; 
+      
       q.opts.forEach((opt,oi)=>{
         const btn = document.createElement('button'); 
         btn.className='choice'; 
         btn.textContent=opt;
+        btn.title=opt;
         btn.dataset.optIndex = oi;
         btn.addEventListener('click',()=>{
           const siblings = btn.parentElement.querySelectorAll('.choice');
           siblings.forEach(s=>s.classList.remove('selected'));
           btn.classList.add('selected');
+          selectedAnswers[i] = oi;
         });
         ch.appendChild(btn);
       });
@@ -264,18 +262,20 @@ submitBtn.addEventListener('click',()=>{
   currentQuestions.forEach((q,i)=>{
     const qdiv = qDivs[i];
     if(q.type==='mcq'){
-      const selected = Array.from(qdiv.querySelectorAll('.choice.selected'));
+      const selected = selectedAnswers[i];
       const correctIndex = q.ans;
-      const correctOption = q.opts[correctIndex];
       
-      if(selected.length===1 && selected[0].textContent===correctOption){
-        selected[0].classList.add('correct');
+      if(selected !== undefined && selected === correctIndex){
+        const correctBtn = qdiv.querySelectorAll('.choice')[selected];
+        correctBtn.classList.add('correct');
       } else { 
-        allCorrect=false; 
-        selected.forEach(s=>s.classList.add('wrong'));
-        qdiv.querySelectorAll('.choice').forEach((btn,idx)=>{
-          if(idx===correctIndex) btn.classList.add('correct');
-        });
+        allCorrect=false;
+        if(selected !== undefined) {
+          const wrongBtn = qdiv.querySelectorAll('.choice')[selected];
+          wrongBtn.classList.add('wrong');
+        }
+        const correctBtn = qdiv.querySelectorAll('.choice')[correctIndex];
+        correctBtn.classList.add('correct');
       }
     }
   });
@@ -286,7 +286,7 @@ submitBtn.addEventListener('click',()=>{
     cell.classList.add(currentTurn==='X'?'claimed-X':'claimed-O');
     document.getElementById(currentTurn==='X'?'scoreX':'scoreO').textContent = parseInt(document.getElementById(currentTurn==='X'?'scoreX':'scoreO').textContent)+1;
     currentTurn = currentTurn==='X'?'O':'X';
-    closeModal();
+    setTimeout(closeModal, 800);
   }
 });
 
