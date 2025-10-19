@@ -35,27 +35,32 @@ body{margin:0;height:100%;background:linear-gradient(180deg,#050606,#071113);col
 input:checked + .slider{background:var(--softblue);}
 input:checked + .slider:before{transform:translateX(26px);}
 .grid{display:grid;grid-template-columns:repeat(3,1fr);gap:8px;}
-.cell{aspect-ratio:1/1;border-radius:14px;background:rgba(255,255,255,0.05);display:flex;align-items:center;justify-content:center;font-size:13px;color:var(--softblue);cursor:pointer;transition:transform .25s,box-shadow .18s;position:relative;padding:8px;text-align:center;}
+.cell{aspect-ratio:1/1;border-radius:14px;background:rgba(255,255,255,0.05);display:flex;align-items:center;justify-content:center;font-size:13px;color:var(--softblue);cursor:pointer;transition:transform .25s,box-shadow .18s;position:relative;padding:8px;text-align:center;font-weight:600;}
 .cell:hover{transform:translateY(-2px);box-shadow:0 6px 12px rgba(0,0,0,0.6);}
 .cell.claimed-X{background:var(--orange);color:#000;}
 .cell.claimed-O{background:var(--lime);color:#000;}
 .cell.active{box-shadow:0 0 12px rgba(255,255,255,0.12);}
 .modal{position:fixed;inset:0;display:none;align-items:center;justify-content:center;background:rgba(0,0,0,0.6);z-index:50;}
 .modal.show{display:flex;}
-.panel{background:rgba(255,255,255,0.05);border-radius:14px;padding:16px;width:90%;max-width:600px;display:flex;flex-direction:column;gap:12px;}
+.panel{background:rgba(255,255,255,0.05);border-radius:14px;padding:16px;width:90%;max-width:600px;max-height:80vh;overflow-y:auto;display:flex;flex-direction:column;gap:12px;}
 .q{background:rgba(255,255,255,0.02);padding:10px;border-radius:10px;border:1px solid rgba(255,255,255,0.04);}
 .q h4{margin:0 0 6px 0;font-size:14px;}
 .choices{display:flex;flex-wrap:wrap;gap:8px;}
-.choice{padding:6px 10px;border-radius:8px;border:1px solid rgba(255,255,255,0.06);cursor:pointer;background:transparent;}
-.choice.selected{outline:2px solid rgba(255,255,255,0.1);}
-.choice.correct{background:var(--lime);}
-.choice.wrong{background:var(--orange);}
+.choice{padding:6px 10px;border-radius:8px;border:1px solid rgba(255,255,255,0.06);cursor:pointer;background:transparent;transition:all 0.2s;}
+.choice:hover{background:rgba(255,255,255,0.05);}
+.choice.selected{outline:2px solid var(--softblue);background:rgba(90,161,242,0.15);}
+.choice.correct{background:var(--lime);color:#000;}
+.choice.wrong{background:var(--orange);color:#000;}
 input.choice{padding:6px 10px;border-radius:8px;border:1px solid rgba(255,255,255,0.06);width:100%;background:#111;color:#fff;}
 input.choice:focus{outline:2px solid var(--softblue);}
-.panelFooter{display:flex;justify-content:space-between;align-items:center;}
-.btn{padding:6px 10px;border-radius:10px;border:none;cursor:pointer;}
+input.choice.correct{background:#1a5c2e;color:var(--lime);}
+input.choice.wrong{background:#5c1a1a;color:var(--orange);}
+.panelFooter{display:flex;justify-content:space-between;align-items:center;margin-top:12px;padding-top:12px;border-top:1px solid rgba(255,255,255,0.05);}
+.btn{padding:8px 14px;border-radius:10px;border:none;cursor:pointer;font-size:12px;font-weight:600;transition:all 0.2s;}
 .btn.primary{background:var(--softblue);color:#000;}
-.btn.ghost{background:transparent;border:1px solid rgba(255,255,255,0.05);color:#fff;}
+.btn.primary:hover{background:#6bb5ff;transform:translateY(-1px);}
+.btn.ghost{background:transparent;border:1px solid rgba(255,255,255,0.1);color:var(--muted);}
+.btn.ghost:hover{background:rgba(255,255,255,0.08);}
 </style>
 </head>
 <body>
@@ -97,49 +102,88 @@ input.choice:focus{outline:2px solid var(--softblue);}
 </div>
 
 <script>
-// Load JSON data
-let quizData = {};
+let allTopicData = {};
 let currentMode = 'A2';
 let boardState = Array(9).fill(null);
 let currentTurn = 'X';
 let activeIndex = null;
+let currentQuestions = [];
 
-const TOPICS = [
-  ['SimplePresent','AdverbsFrequency','AdverbsManner'],
-  ['HabitualActions','NegativeSentences','InterrogativeSentences'],
-  ['PresentContinuousContrast','CommonCollocations','UniversalTruths']
+const TOPICS_A2 = [
+  ['SimplePresent','PresentContinuous','FrequencyAdverbs'],
+  ['BasicCollocations','PersonalRoutine','NegativeStatements'],
+  ['BasicQuestions','SimplePastRoutine','BasicAdverbsOfManner']
 ];
 
-async function loadData() {
+const TOPICS_B2C1 = [
+  ['Cities','English','Sports'],
+  ['English','Music','English'],
+  ['FamousPeople','Countries','English']
+];
+
+const TOPIC_FILES = {
+  'Cities': 'cities.json',
+  'Countries': 'countries.json',
+  'Sports': 'sports.json',
+  'Music': 'music.json',
+  'FamousPeople': 'famous-people.json',
+  'English': 'advanced-mode.json'
+};
+
+function getTopics() {
+  return currentMode === 'A2' ? TOPICS_A2 : TOPICS_B2C1;
+}
+
+function shuffleArray(arr) {
+  return arr.sort(() => Math.random() - 0.5);
+}
+
+async function loadMode(mode) {
   try {
-    const res = await fetch('advanced-mode.json');
-    quizData = await res.json();
+    if(mode === 'A2') {
+      const res = await fetch('elementary-mode.json');
+      allTopicData = await res.json();
+    } else {
+      // Load all topic files
+      for(const [topicName, fileName] of Object.entries(TOPIC_FILES)) {
+        if(fileName === 'advanced-mode.json') continue;
+        const res = await fetch(fileName);
+        const data = await res.json();
+        allTopicData[topicName] = data;
+      }
+      const advRes = await fetch('advanced-mode.json');
+      allTopicData['English'] = await advRes.json();
+    }
     buildGrid();
   } catch (error) {
-    console.error('Error loading quiz data:', error);
+    console.error('Error loading data:', error);
   }
 }
 
 function buildGrid(){
   const grid = document.getElementById('grid');
   grid.innerHTML = '';
+  const topics = getTopics();
+  
   for(let r=0;r<3;r++){
     for(let c=0;c<3;c++){
       const idx = r*3+c;
       const cell = document.createElement('div');
       cell.className = 'cell';
       cell.dataset.index = idx;
-      cell.textContent = TOPICS[r][c];
+      cell.textContent = topics[r][c];
       cell.addEventListener('click',()=>openModal(idx));
       grid.appendChild(cell);
     }
   }
 }
-loadData();
+
+loadMode(currentMode);
 
 document.getElementById('modeToggle').addEventListener('change',(e)=>{
-  currentMode = e.target.checked ? 'B2C1' : 'A2';
+  currentMode = e.target.checked ? 'B2/C1' : 'A2';
   resetBoard();
+  loadMode(currentMode);
 });
 
 const modal = document.getElementById('modal');
@@ -151,7 +195,8 @@ function openModal(idx){
   if(boardState[idx]) return;
   activeIndex = idx;
   modal.classList.add('show');
-  const topic = TOPICS[Math.floor(idx/3)][idx%3];
+  const topics = getTopics();
+  const topic = topics[Math.floor(idx/3)][idx%3];
   renderQuestions(topic);
   document.querySelector(`.cell[data-index='${idx}']`).classList.add('active');
 }
@@ -168,21 +213,45 @@ closeBtn.addEventListener('click',closeModal);
 
 function renderQuestions(topic){
   panelBody.innerHTML='';
-  const questions = quizData[topic] ? quizData[topic].slice(0, 5) : [];
+  
+  let questions = [];
+  if(currentMode === 'A2') {
+    questions = allTopicData[topic] ? allTopicData[topic].slice(0, 5) : [];
+  } else {
+    const topicData = allTopicData[topic];
+    if(topicData && topicData.questions) {
+      questions = shuffleArray([...topicData.questions]).slice(0, 5);
+    }
+  }
+  
+  currentQuestions = questions;
+  
   questions.forEach((q,i)=>{
-    const qdiv = document.createElement('div'); qdiv.className='q';
-    const h = document.createElement('h4'); h.textContent = `Q${i+1}. ${q.q}`; qdiv.appendChild(h);
+    const qdiv = document.createElement('div'); 
+    qdiv.className='q';
+    qdiv.dataset.qIndex = i;
+    
+    const h = document.createElement('h4'); 
+    h.textContent = `Q${i+1}. ${q.q}`; 
+    qdiv.appendChild(h);
 
     if(q.type==='mcq'){
-      const ch = document.createElement('div'); ch.className='choices';
+      const ch = document.createElement('div'); 
+      ch.className='choices';
       q.opts.forEach((opt,oi)=>{
-        const btn = document.createElement('button'); btn.className='choice'; btn.textContent=opt;
+        const btn = document.createElement('button'); 
+        btn.className='choice'; 
+        btn.textContent=opt;
+        btn.dataset.optIndex = oi;
         btn.addEventListener('click',()=>btn.classList.toggle('selected'));
         ch.appendChild(btn);
       });
       qdiv.appendChild(ch);
     } else if(q.type==='gap'){
-      const inp = document.createElement('input'); inp.className='choice'; inp.placeholder='type answer';
+      const inp = document.createElement('input'); 
+      inp.className='choice'; 
+      inp.placeholder='type answer';
+      inp.dataset.qIndex = i;
       qdiv.appendChild(inp);
     }
     panelBody.appendChild(qdiv);
@@ -191,34 +260,44 @@ function renderQuestions(topic){
 
 submitBtn.addEventListener('click',()=>{
   if(activeIndex===null) return;
-  const cell = document.querySelector(`.cell[data-index='${activeIndex}']`);
-  const topic = TOPICS[Math.floor(activeIndex/3)][activeIndex%3];
-  const questions = quizData[topic] ? quizData[topic].slice(0, 5) : [];
-  let correct = true;
+  let allCorrect = true;
   const qDivs = Array.from(panelBody.querySelectorAll('.q'));
 
-  questions.forEach((q,i)=>{
+  currentQuestions.forEach((q,i)=>{
     const qdiv = qDivs[i];
     if(q.type==='mcq'){
       const selected = Array.from(qdiv.querySelectorAll('.choice.selected'));
       const correctIndex = q.ans;
-      if(selected.length===1 && selected[0].textContent===q.opts[correctIndex]){
+      const correctOption = q.opts[correctIndex];
+      
+      if(selected.length===1 && selected[0].textContent===correctOption){
         selected[0].classList.add('correct');
-      } else { correct=false; selected.forEach(s=>s.classList.add('wrong'));}
+      } else { 
+        allCorrect=false; 
+        selected.forEach(s=>s.classList.add('wrong'));
+        qdiv.querySelectorAll('.choice').forEach((btn,idx)=>{
+          if(idx===correctIndex) btn.classList.add('correct');
+        });
+      }
     } else if(q.type==='gap'){
-      const val = qdiv.querySelector('input').value.trim().toLowerCase();
-      if(val===q.a.toLowerCase()){ qdiv.querySelector('input').classList.add('correct'); } else { correct=false; qdiv.querySelector('input').classList.add('wrong'); }
+      const inp = qdiv.querySelector('input');
+      const val = inp.value.trim().toLowerCase();
+      if(val===q.ans.toLowerCase()){ 
+        inp.classList.add('correct'); 
+      } else { 
+        allCorrect=false; 
+        inp.classList.add('wrong');
+      }
     }
   });
 
-  if(correct){ 
+  if(allCorrect){ 
+    const cell = document.querySelector(`.cell[data-index='${activeIndex}']`);
     boardState[activeIndex]=currentTurn;
     cell.classList.add(currentTurn==='X'?'claimed-X':'claimed-O');
     document.getElementById(currentTurn==='X'?'scoreX':'scoreO').textContent = parseInt(document.getElementById(currentTurn==='X'?'scoreX':'scoreO').textContent)+1;
     currentTurn = currentTurn==='X'?'O':'X';
   }
-
-  closeModal();
 });
 
 function resetBoard(){
