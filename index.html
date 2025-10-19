@@ -12,20 +12,6 @@
   --orange:#ffa24b;
   --softblue:#5aa1f2;
   --card-pad:16px;
-  --accent-bezier:cubic-bezier(.4,0,.2,1);<!doctype html>
-<html lang="en">
-<head>
-<meta charset="utf-8">
-<meta name="viewport" content="width=device-width,initial-scale=1">
-<title>INTUITY — English Grammar Quiz</title>
-<style>
-:root{
-  --bg:#060606;
-  --muted:#dfeee0;
-  --lime:#9be56a;
-  --orange:#ffa24b;
-  --softblue:#5aa1f2;
-  --card-pad:16px;
   --accent-bezier:cubic-bezier(.4,0,.2,1);
   font-family: -apple-system, 'SF Pro Text', 'Helvetica Neue', Arial, sans-serif;
 }
@@ -146,37 +132,50 @@ async function loadMode(mode) {
   try {
     allTopicData = {};
     if(mode === 'A2') {
-      const fileNames = ['a2-cities.json', 'a2-countries.json', 'a2-music.json', 'a2-famous-people.json', 'a2-english.josn'];
-      const topicNames = ['Cities', 'Countries', 'Music', 'FamousPeople', 'English'];
+      const configs = [
+        {file: 'a2-cities.json', topic: 'Cities'},
+        {file: 'a2-countries.json', topic: 'Countries'},
+        {file: 'a2-music.json', topic: 'Music'},
+        {file: 'a2-famous-people.json', topic: 'FamousPeople'},
+        {file: 'a2-english.josn', topic: 'English'}
+      ];
       
-      for(let i = 0; i < fileNames.length; i++) {
+      for(let config of configs) {
         try {
-          const res = await fetch(fileNames[i]);
+          const res = await fetch(config.file);
+          if(!res.ok) throw new Error(`HTTP ${res.status}`);
           const data = await res.json();
-          allTopicData[topicNames[i]] = data;
-          console.log(`Loaded ${topicNames[i]}:`, data);
+          allTopicData[config.topic] = data;
+          console.log(`✓ Loaded ${config.topic}:`, data);
         } catch(err) {
-          console.error(`Failed to load ${fileNames[i]}:`, err);
+          console.error(`✗ Failed to load ${config.file}:`, err);
         }
       }
     } else {
-      const fileNames = ['cities.json', 'countries.json', 'sports.json', 'music.json', 'famous-people.json', 'advanced-mode.json'];
-      const topicNames = ['Cities', 'Countries', 'Sports', 'Music', 'FamousPeople', 'English'];
+      const configs = [
+        {file: 'cities.json', topic: 'Cities'},
+        {file: 'countries.json', topic: 'Countries'},
+        {file: 'sports.json', topic: 'Sports'},
+        {file: 'music.json', topic: 'Music'},
+        {file: 'famous-people.json', topic: 'FamousPeople'},
+        {file: 'advanced-mode.json', topic: 'English'}
+      ];
       
-      for(let i = 0; i < fileNames.length; i++) {
+      for(let config of configs) {
         try {
-          const res = await fetch(fileNames[i]);
+          const res = await fetch(config.file);
+          if(!res.ok) throw new Error(`HTTP ${res.status}`);
           const data = await res.json();
-          allTopicData[topicNames[i]] = data;
-          console.log(`Loaded ${topicNames[i]}:`, data);
+          allTopicData[config.topic] = data;
+          console.log(`✓ Loaded ${config.topic}:`, data);
         } catch(err) {
-          console.error(`Failed to load ${fileNames[i]}:`, err);
+          console.error(`✗ Failed to load ${config.file}:`, err);
         }
       }
     }
     buildGrid();
   } catch (error) {
-    console.error('Error loading data:', error);
+    console.error('Error in loadMode:', error);
   }
 }
 
@@ -224,60 +223,85 @@ function openModal(idx){
   const topics = getTopics();
   const topic = topics[Math.floor(idx/3)][idx%3];
   renderQuestions(topic);
-  document.querySelector(`.cell[data-index='${idx}']`).classList.add('active');
+  const activeCell = document.querySelector(`.cell[data-index='${idx}']`);
+  if(activeCell) activeCell.classList.add('active');
 }
 
 function closeModal(){
   modal.classList.remove('show');
   boardWrap.classList.remove('hidden');
   if(activeIndex!==null){
-    document.querySelector(`.cell[data-index='${activeIndex}']`).classList.remove('active');
+    const activeCell = document.querySelector(`.cell[data-index='${activeIndex}']`);
+    if(activeCell) activeCell.classList.remove('active');
     activeIndex = null;
   }
 }
 
 closeBtn.addEventListener('click',closeModal);
 
+function extractMCQQuestions(topicData) {
+  let allQuestions = [];
+  
+  try {
+    // Case 1: {questions: [...]}
+    if(topicData && topicData.questions && Array.isArray(topicData.questions)) {
+      allQuestions = topicData.questions;
+    }
+    // Case 2: Direct array
+    else if(Array.isArray(topicData)) {
+      allQuestions = topicData;
+    }
+    // Case 3: Object with category keys (like advanced-mode.json or elementary-mode.json)
+    else if(topicData && typeof topicData === 'object') {
+      for(let key in topicData) {
+        if(Array.isArray(topicData[key])) {
+          allQuestions.push(...topicData[key]);
+        }
+      }
+    }
+    
+    // Filter for MCQ questions with valid options
+    const mcqQuestions = allQuestions.filter(q => {
+      return q && 
+             q.type === 'mcq' && 
+             q.opts && 
+             Array.isArray(q.opts) && 
+             q.opts.length >= 2 &&
+             typeof q.ans === 'number' &&
+             q.ans >= 0 &&
+             q.ans < q.opts.length;
+    });
+    
+    return mcqQuestions;
+  } catch(err) {
+    console.error('Error extracting questions:', err);
+    return [];
+  }
+}
+
 function renderQuestions(topic){
   panelBody.innerHTML='';
   
-  let questions = [];
   const topicData = allTopicData[topic];
   
-  console.log(`Rendering topic: ${topic}`, topicData);
+  console.log(`=== Rendering topic: ${topic} ===`);
+  console.log('Raw data:', topicData);
   
   if(!topicData) {
-    panelBody.innerHTML = '<p style="color:var(--orange);">Error: No data found for this topic</p>';
+    panelBody.innerHTML = '<p style="color:var(--orange);">Error: Topic data not loaded. Check console for details.</p>';
     return;
   }
   
-  // Handle different data structures
-  if(topicData.questions && Array.isArray(topicData.questions)) {
-    // Structure: {questions: [...]} (for cultural topics)
-    questions = topicData.questions.filter(q => q.type === 'mcq' && q.opts && q.opts.length >= 2);
-  } else if(Array.isArray(topicData)) {
-    // Structure: direct array (for a2-english.json)
-    questions = topicData.filter(q => q.type === 'mcq' && q.opts && q.opts.length >= 2);
-  } else if(typeof topicData === 'object') {
-    // Structure: nested object with categories (for advanced-mode.json)
-    const allQuestions = [];
-    for(let category in topicData) {
-      if(Array.isArray(topicData[category])) {
-        const catQuestions = topicData[category].filter(q => q.type === 'mcq' && q.opts && q.opts.length >= 2);
-        allQuestions.push(...catQuestions);
-      }
-    }
-    questions = allQuestions;
-  }
-  
-  // Shuffle and take 5 questions
-  questions = shuffleArray([...questions]).slice(0, 5);
+  let questions = extractMCQQuestions(topicData);
+  console.log(`Found ${questions.length} valid MCQ questions`);
   
   if(questions.length === 0) {
-    panelBody.innerHTML = '<p style="color:var(--orange);">No MCQ questions available for this topic. Please check the file format.</p>';
+    panelBody.innerHTML = `<p style="color:var(--orange);">No valid MCQ questions found for ${topic}.<br>Data structure: ${Array.isArray(topicData) ? 'Array' : typeof topicData}</p>`;
     return;
   }
   
+  // Shuffle and take up to 5 questions
+  questions = shuffleArray([...questions]).slice(0, 5);
   currentQuestions = questions;
   
   questions.forEach((q,i)=>{
@@ -324,357 +348,24 @@ submitBtn.addEventListener('click',()=>{
     
     if(selected !== undefined && selected === correctIndex){
       const correctBtn = qdiv.querySelectorAll('.choice')[selected];
-      correctBtn.classList.add('correct');
+      if(correctBtn) correctBtn.classList.add('correct');
     } else { 
       allCorrect=false;
       if(selected !== undefined) {
         const wrongBtn = qdiv.querySelectorAll('.choice')[selected];
-        wrongBtn.classList.add('wrong');
+        if(wrongBtn) wrongBtn.classList.add('wrong');
       }
       const correctBtn = qdiv.querySelectorAll('.choice')[correctIndex];
-      correctBtn.classList.add('correct');
+      if(correctBtn) correctBtn.classList.add('correct');
     }
   });
 
   if(allCorrect){ 
     const cell = document.querySelector(`.cell[data-index='${activeIndex}']`);
     boardState[activeIndex]=currentTurn;
-    cell.classList.add(currentTurn==='X'?'claimed-X':'claimed-O');
-    document.getElementById(currentTurn==='X'?'scoreX':'scoreO').textContent = parseInt(document.getElementById(currentTurn==='X'?'scoreX':'scoreO').textContent)+1;
-    currentTurn = currentTurn==='X'?'O':'X';
-    setTimeout(closeModal, 800);
-  }
-});
-
-function resetBoard(){
-  boardState.fill(null);
-  currentTurn='X';
-  document.getElementById('scoreX').textContent=0;
-  document.getElementById('scoreO').textContent=0;
-  buildGrid();
-}
-</script>
-</body>
-</html>
-  font-family: -apple-system, 'SF Pro Text', 'Helvetica Neue', Arial, sans-serif;
-}
-*{box-sizing:border-box;}
-body{margin:0;height:100%;background:linear-gradient(180deg,#050606,#071113);color:var(--muted);-webkit-font-smoothing:antialiased;}
-.container{max-width:500px;margin:20px auto;padding:16px;display:flex;flex-direction:column;gap:16px;}
-.header{text-align:center;margin-bottom:10px;}
-.header h1{margin:0;font-size:22px;color:whitesmoke;font-weight:600;}
-.header .sub{font-size:13px;color:rgba(255,255,255,0.7);}
-.header .author{font-size:12px;color:rgba(255,255,255,0.45);}
-.boardWrap{background:rgba(255,255,255,0.02);border-radius:16px;padding:16px;display:flex;flex-direction:column;gap:12px;position:relative;transition:all 0.3s ease;}
-.boardWrap.hidden{display:none;}
-.topBar{display:flex;justify-content:space-between;align-items:center;margin-bottom:12px;}
-.players{display:flex;gap:10px;}
-.player{padding:6px 10px;border-radius:12px;background:rgba(255,255,255,0.03);display:flex;align-items:center;gap:6px;font-size:14px;}
-.toggleWrap{display:flex;align-items:center;gap:6px;}
-.toggleLabel{font-size:12px;}
-.toggleSwitch{position:relative;display:inline-block;width:50px;height:24px;}
-.toggleSwitch input{opacity:0;width:0;height:0;}
-.slider{position:absolute;cursor:pointer;top:0;left:0;right:0;bottom:0;background:#333;border-radius:34px;transition:.4s;}
-.slider:before{position:absolute;content:"";height:18px;width:18px;left:3px;bottom:3px;background:white;border-radius:50%;transition:.4s;}
-input:checked + .slider{background:var(--softblue);}
-input:checked + .slider:before{transform:translateX(26px);}
-.grid{display:grid;grid-template-columns:repeat(3,1fr);gap:8px;}
-.cell{aspect-ratio:1/1;border-radius:14px;background:rgba(255,255,255,0.05);display:flex;align-items:center;justify-content:center;font-size:13px;color:var(--softblue);cursor:pointer;transition:transform .25s,box-shadow .18s;position:relative;padding:8px;text-align:center;font-weight:600;}
-.cell:hover{transform:translateY(-2px);box-shadow:0 6px 12px rgba(0,0,0,0.6);}
-.cell.claimed-X{background:var(--orange);color:#000;}
-.cell.claimed-O{background:var(--lime);color:#000;}
-.cell.active{box-shadow:0 0 12px rgba(255,255,255,0.12);}
-.modal{position:fixed;inset:0;display:none;align-items:center;justify-content:center;background:rgba(0,0,0,0.8);z-index:50;backdrop-filter:blur(5px);padding:20px;}
-.modal.show{display:flex;}
-.panel{background:rgba(20,20,25,0.95);border-radius:20px;padding:24px;width:100%;max-width:550px;max-height:85vh;overflow-y:auto;display:flex;flex-direction:column;gap:14px;border:1px solid rgba(255,255,255,0.1);box-shadow:0 25px 50px rgba(0,0,0,0.8);}
-.q{background:rgba(255,255,255,0.04);padding:12px;border-radius:12px;border:1px solid rgba(255,255,255,0.08);}
-.q h4{margin:0 0 10px 0;font-size:13px;font-weight:600;color:var(--muted);line-height:1.4;}
-.choices{display:grid;grid-template-columns:1fr 1fr;gap:8px;}
-.choices.col-1{grid-template-columns:1fr;}
-.choice{padding:8px 10px;border-radius:8px;border:1.5px solid rgba(255,255,255,0.15);cursor:pointer;background:rgba(255,255,255,0.03);transition:all 0.25s;font-size:12px;color:var(--muted);text-align:center;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;}
-.choice:hover{background:rgba(90,161,242,0.12);border-color:rgba(90,161,242,0.3);}
-.choice.selected{background:rgba(90,161,242,0.25);border-color:var(--softblue);color:var(--muted);font-weight:600;box-shadow:0 0 8px rgba(90,161,242,0.2);}
-.choice.correct{background:rgba(155,229,106,0.25);border-color:var(--lime);color:var(--lime);font-weight:600;}
-.choice.wrong{background:rgba(255,162,75,0.25);border-color:var(--orange);color:var(--orange);font-weight:600;}
-.panelFooter{display:flex;justify-content:space-between;align-items:center;margin-top:16px;padding-top:12px;border-top:1px solid rgba(255,255,255,0.08);}
-.btn{padding:10px 16px;border-radius:12px;border:none;cursor:pointer;font-size:12px;font-weight:600;transition:all 0.2s;}
-.btn.primary{background:var(--softblue);color:#000;}
-.btn.primary:hover{background:#6bb5ff;transform:translateY(-1px);box-shadow:0 4px 12px rgba(90,161,242,0.3);}
-.btn.ghost{background:rgba(255,255,255,0.05);border:1px solid rgba(255,255,255,0.1);color:var(--muted);}
-.btn.ghost:hover{background:rgba(255,255,255,0.1);}
-</style>
-</head>
-<body>
-<div class="container">
-  <div class="header">
-    <h1>INTUITY</h1>
-    <div class="sub">Intuitive & Immersive</div>
-    <div class="author">Majid Nashtai</div>
-  </div>
-
-  <div class="boardWrap" id="boardWrap">
-    <div class="topBar">
-      <div class="players">
-        <div class="player" id="playerX">❌ <span id="scoreX">0</span></div>
-        <div class="player" id="playerO">⭕ <span id="scoreO">0</span></div>
-      </div>
-      <div class="toggleWrap">
-        <span class="toggleLabel">A2</span>
-        <label class="toggleSwitch">
-          <input type="checkbox" id="modeToggle">
-          <span class="slider"></span>
-        </label>
-        <span class="toggleLabel">B2/C1</span>
-      </div>
-    </div>
-
-    <div class="grid" id="grid"></div>
-  </div>
-</div>
-
-<div class="modal" id="modal">
-  <div class="panel">
-    <div id="panelBody"></div>
-    <div class="panelFooter">
-      <button class="btn ghost" id="closeBtn">Close</button>
-      <button class="btn primary" id="submitBtn">Submit</button>
-    </div>
-  </div>
-</div>
-
-<script>
-let allTopicData = {};
-let currentMode = 'A2';
-let boardState = Array(9).fill(null);
-let currentTurn = 'X';
-let activeIndex = null;
-let currentQuestions = [];
-let selectedAnswers = {};
-
-const TOPICS_A2 = [
-  ['English','Music','English'],
-  ['Cities','English','Countries'],
-  ['English','FamousPeople','English']
-];
-
-const TOPICS_B2C1 = [
-  ['Cities','English','Sports'],
-  ['English','Music','English'],
-  ['FamousPeople','Countries','English']
-];
-
-function getTopics() {
-  return currentMode === 'A2' ? TOPICS_A2 : TOPICS_B2C1;
-}
-
-function shuffleArray(arr) {
-  return arr.sort(() => Math.random() - 0.5);
-}
-
-async function loadMode(mode) {
-  try {
-    allTopicData = {};
-    if(mode === 'A2') {
-      // Load A2 files
-      const fileNames = ['a2-cities.json', 'a2-countries.json', 'a2-music.json', 'a2-famous-people.json', 'a2-english.json'];
-      const topicNames = ['Cities', 'Countries', 'Music', 'FamousPeople', 'English'];
-      
-      for(let i = 0; i < fileNames.length; i++) {
-        try {
-          const res = await fetch(fileNames[i]);
-          const data = await res.json();
-          allTopicData[topicNames[i]] = data;
-          console.log(`Loaded ${topicNames[i]}:`, data);
-        } catch(err) {
-          console.error(`Failed to load ${fileNames[i]}:`, err);
-        }
-      }
-    } else {
-      // Load B2/C1 files
-      const fileNames = ['cities.json', 'countries.json', 'sports.json', 'music.json', 'famous-people.json', 'advanced-mode.json'];
-      const topicNames = ['Cities', 'Countries', 'Sports', 'Music', 'FamousPeople', 'English'];
-      
-      for(let i = 0; i < fileNames.length; i++) {
-        try {
-          const res = await fetch(fileNames[i]);
-          const data = await res.json();
-          allTopicData[topicNames[i]] = data;
-          console.log(`Loaded ${topicNames[i]}:`, data);
-        } catch(err) {
-          console.error(`Failed to load ${fileNames[i]}:`, err);
-        }
-      }
-    }
-    buildGrid();
-  } catch (error) {
-    console.error('Error loading data:', error);
-  }
-}
-
-function buildGrid(){
-  const grid = document.getElementById('grid');
-  grid.innerHTML = '';
-  const topics = getTopics();
-  
-  for(let r=0;r<3;r++){
-    for(let c=0;c<3;c++){
-      const idx = r*3+c;
-      const cell = document.createElement('div');
-      cell.className = 'cell';
-      if(boardState[idx]) {
-        cell.classList.add(`claimed-${boardState[idx]}`);
-      }
-      cell.dataset.index = idx;
-      cell.textContent = topics[r][c];
-      cell.addEventListener('click',()=>openModal(idx));
-      grid.appendChild(cell);
-    }
-  }
-}
-
-loadMode(currentMode);
-
-document.getElementById('modeToggle').addEventListener('change',(e)=>{
-  currentMode = e.target.checked ? 'B2/C1' : 'A2';
-  resetBoard();
-  loadMode(currentMode);
-});
-
-const modal = document.getElementById('modal');
-const boardWrap = document.getElementById('boardWrap');
-const panelBody = document.getElementById('panelBody');
-const closeBtn = document.getElementById('closeBtn');
-const submitBtn = document.getElementById('submitBtn');
-
-function openModal(idx){
-  if(boardState[idx]) return;
-  activeIndex = idx;
-  selectedAnswers = {};
-  modal.classList.add('show');
-  boardWrap.classList.add('hidden');
-  const topics = getTopics();
-  const topic = topics[Math.floor(idx/3)][idx%3];
-  renderQuestions(topic);
-  document.querySelector(`.cell[data-index='${idx}']`).classList.add('active');
-}
-
-function closeModal(){
-  modal.classList.remove('show');
-  boardWrap.classList.remove('hidden');
-  if(activeIndex!==null){
-    document.querySelector(`.cell[data-index='${activeIndex}']`).classList.remove('active');
-    activeIndex = null;
-  }
-}
-
-closeBtn.addEventListener('click',closeModal);
-
-function renderQuestions(topic){
-  panelBody.innerHTML='';
-  
-  let questions = [];
-  const topicData = allTopicData[topic];
-  
-  console.log(`Rendering topic: ${topic}`, topicData);
-  
-  if(!topicData) {
-    panelBody.innerHTML = '<p style="color:var(--orange);">Error: No data found for this topic</p>';
-    return;
-  }
-  
-  // Handle both structures: {questions: [...]} and direct array or nested object
-  if(topicData.questions && Array.isArray(topicData.questions)) {
-    // Structure: {questions: [...]} (for cultural topics)
-    questions = topicData.questions.filter(q => q.type === 'mcq');
-    questions = shuffleArray([...questions]).slice(0, 5);
-  } else if(Array.isArray(topicData)) {
-    // Structure: direct array (for a2-english.json)
-    questions = topicData.filter(q => q.type === 'mcq');
-    questions = shuffleArray([...questions]).slice(0, 5);
-  } else if(typeof topicData === 'object') {
-    // Structure: nested object with categories (for advanced-mode.json)
-    const allQuestions = [];
-    for(let category in topicData) {
-      if(Array.isArray(topicData[category])) {
-        const catQuestions = topicData[category].filter(q => q.type === 'mcq');
-        allQuestions.push(...catQuestions);
-      }
-    }
-    questions = shuffleArray([...allQuestions]).slice(0, 5);
-  }
-  
-  if(questions.length === 0) {
-    panelBody.innerHTML = '<p style="color:var(--orange);">No MCQ questions available for this topic</p>';
-    return;
-  }
-  
-  currentQuestions = questions;
-  
-  questions.forEach((q,i)=>{
-    const qdiv = document.createElement('div'); 
-    qdiv.className='q';
-    qdiv.dataset.qIndex = i;
-    
-    const h = document.createElement('h4'); 
-    h.textContent = `Q${i+1}. ${q.q}`; 
-    qdiv.appendChild(h);
-
-    if(q.type==='mcq'){
-      const ch = document.createElement('div'); 
-      const optCount = q.opts.length;
-      ch.className = optCount > 2 ? 'choices' : 'choices col-1'; 
-      
-      q.opts.forEach((opt,oi)=>{
-        const btn = document.createElement('button'); 
-        btn.className='choice'; 
-        btn.textContent=opt;
-        btn.title=opt;
-        btn.dataset.optIndex = oi;
-        btn.addEventListener('click',()=>{
-          const siblings = btn.parentElement.querySelectorAll('.choice');
-          siblings.forEach(s=>s.classList.remove('selected'));
-          btn.classList.add('selected');
-          selectedAnswers[i] = oi;
-        });
-        ch.appendChild(btn);
-      });
-      qdiv.appendChild(ch);
-    }
-    panelBody.appendChild(qdiv);
-  });
-}
-
-submitBtn.addEventListener('click',()=>{
-  if(activeIndex===null) return;
-  let allCorrect = true;
-  const qDivs = Array.from(panelBody.querySelectorAll('.q'));
-
-  currentQuestions.forEach((q,i)=>{
-    const qdiv = qDivs[i];
-    if(q.type==='mcq'){
-      const selected = selectedAnswers[i];
-      const correctIndex = q.ans;
-      
-      if(selected !== undefined && selected === correctIndex){
-        const correctBtn = qdiv.querySelectorAll('.choice')[selected];
-        correctBtn.classList.add('correct');
-      } else { 
-        allCorrect=false;
-        if(selected !== undefined) {
-          const wrongBtn = qdiv.querySelectorAll('.choice')[selected];
-          wrongBtn.classList.add('wrong');
-        }
-        const correctBtn = qdiv.querySelectorAll('.choice')[correctIndex];
-        correctBtn.classList.add('correct');
-      }
-    }
-  });
-
-  if(allCorrect){ 
-    const cell = document.querySelector(`.cell[data-index='${activeIndex}']`);
-    boardState[activeIndex]=currentTurn;
-    cell.classList.add(currentTurn==='X'?'claimed-X':'claimed-O');
-    document.getElementById(currentTurn==='X'?'scoreX':'scoreO').textContent = parseInt(document.getElementById(currentTurn==='X'?'scoreX':'scoreO').textContent)+1;
+    if(cell) cell.classList.add(currentTurn==='X'?'claimed-X':'claimed-O');
+    const scoreEl = document.getElementById(currentTurn==='X'?'scoreX':'scoreO');
+    if(scoreEl) scoreEl.textContent = parseInt(scoreEl.textContent)+1;
     currentTurn = currentTurn==='X'?'O':'X';
     setTimeout(closeModal, 800);
   }
