@@ -1,0 +1,19 @@
+{
+  "questions": [
+    {"q":"The FIFA World Cup takes place every ____ years and features 32 teams.","type":"gap","ans":"four"},
+    {"q":"Which tennis Grand Slam is played on clay courts in Paris?","type":"mcq","opts":["Wimbledon","US Open","French Open","Australian Open"],"ans":2},
+    {"q":"The Winter Olympics feature sports like skiing, ice hockey, and ____","type":"gap","ans":"figure skating"},
+    {"q":"Basketball was invented in 1891 by Canadian physical education teacher ____.","type":"gap","ans":"James Naismith"},
+    {"q":"Cricket originated in England but is now most popular in which regions?","type":"mcq","opts":["Europe","South Asia and the Caribbean","North America","Africa"],"ans":1},
+    {"q":"The Tour de France is a ____ cycling race that lasts three weeks.","type":"gap","ans":"prestigious"},
+    {"q":"American football evolved from which sport?","type":"mcq","opts":["Soccer","Rugby","Baseball","Lacrosse"],"ans":1},
+    {"q":"The Super Bowl is watched by over ____ million viewers annually.","type":"gap","ans":"100"},
+    {"q":"Volleyball was invented in 1895 as a sport for those seeking something less ____ than basketball.","type":"gap","ans":"contact-intensive"},
+    {"q":"The Olympics were revived in 1896 in Athens after being ____ for nearly 1,500 years.","type":"gap","ans":"discontinued"},
+    {"q":"Which sport is known as 'the beautiful game'?","type":"mcq","opts":["Basketball","Football/Soccer","Tennis","Golf"],"ans":1},
+    {"q":"The Wimbledon tennis tournament requires players to wear predominantly ____","type":"gap","ans":"white"},
+    {"q":"Ice skating competitions include both artistic and ____ skating events.","type":"gap","ans":"speed"},
+    {"q":"Martial arts like karate and judo have their origins in which country?","type":"mcq","opts":["China","Japan","Thailand","South Korea"],"ans":1},
+    {"q":"The Marathon distance of 42.195 km commemorates a legendary run from ____ to Athens.","type":"gap","ans":"Marathon"}
+  ]
+}
